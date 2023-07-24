@@ -7,7 +7,7 @@ setup(
     name='pyepsilla',
     version= '0.0.1',
     keywords='epsilla',
-    author= 'Epsilla',
+    author= 'Epsilla Team',
     description='Epsilla Python SDK',
     license='Apache License',
     packages=find_packages(),
