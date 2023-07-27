@@ -44,4 +44,6 @@ client.create_table(tablename="MyTable", fields=fields)
 
 ## 3.FAQ
 
+https://pypi.org/project/pyepsilla/#history
+
 
