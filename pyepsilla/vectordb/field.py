@@ -3,7 +3,7 @@
 
 from enum import IntEnum
 
-class Filed():
+class Field():
     def __init__(self, name, data_type, primary_key, dimensions, ):
         pass
 
@@ -16,7 +16,6 @@ class FieldType(IntEnum):
     DOUBLE = 11
     STRING = 20
     BOOL = 30
-
     VECTOR_FLOAT = 40
     VECTOR_DOUBLE = 41
     UNKNOWN = 999

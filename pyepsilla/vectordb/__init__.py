@@ -2,4 +2,4 @@
 # -*- coding:utf-8 -*-
 
 from .client import Client
-from .field import Field
+from .field import Field, FieldType
