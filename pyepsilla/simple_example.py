@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+# pip3 install --upgrade pyepsilla
+
+from pyepsilla import vectordb
+
 
 ## 1.Connect to Epsilla VectorDB
-c = Client(host='127.0.0.1', port='8888', database='default')
+c = vectordb.Client(host='127.0.0.1', port='8888', database='default')
 
 ##
 status, body = c.welcome()
