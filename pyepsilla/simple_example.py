@@ -5,15 +5,16 @@
 # 1. docker run --pull=always -d -p 8888:8888 epsilla/vectordb
 # 2. pip3 install --upgrade pyepsilla
 # 3. python3 simple_example.py
+#
 
 from pyepsilla import vectordb
 import random, string, time
 
-## 1.Connect to Epsilla VectorDB
+## Connect to Epsilla VectorDB
 c = vectordb.Client(host='127.0.0.1', port='8888', db_name='default')
 # c = vectordb.Client(host='3.209.6.179', port='8888', db_name='default')
 
-##
+## Check VectorDB Status
 status_code, response = c.welcome()
 status_code, response = c.state()
 
@@ -26,8 +27,8 @@ c.use_db(db_name="myDB")
 ## Unload DB
 # c.unload(db_name="myDB")
 
-## Create a table with schema in current DB
 
+## Create a table with schema in current DB
 ### define records number and vector dimension
 records_num = 3000
 dimensions = 8
@@ -38,6 +39,7 @@ vec_field = {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": dime
 
 fields = [id_field, doc_field, vec_field]
 status_code, response = c.create_table(table_name="MyTable", table_fields=fields)
+
 
 ## Insert new vector records into table
 # Ids = [ i for i in range(5)]
@@ -57,7 +59,7 @@ Embedding = [[random.random() for _ in range(dimensions)] for _ in range(records
 records_data = [ {"ID": i, "Doc": Docs[i], "Embedding": Embedding[i]} for i in range(records_num)]
 status_code, response = c.insert(table_name="MyTable", records=records_data)
 
-# time.sleep(5)
+
 ## Query Vectors
 query_field = "Embedding"
 query_vector = Embedding[-1]
