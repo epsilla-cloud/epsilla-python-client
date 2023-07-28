@@ -17,7 +17,7 @@ class Client():
     def __check__(self):
         socket.setdefaulttimeout(self._timeout)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        check_result = s.connect_ex((self._host, self._port))
+        check_result = s.connect_ex((self._host, int(self._port)))
         if check_result == 0:
             print("{}:{} can be arrived!".format(self._host, self._port))
         else:
@@ -36,7 +36,7 @@ class Client():
     def state(self):
         req_url = "{}/state".format(self._baseurl)
         req_data= None
-        res = self._rs.get(url=req_url, data=json.dumps(req_data), headers=self._header)
+        res = requests.get(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
         print("Return:", body)
