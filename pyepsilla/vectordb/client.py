@@ -12,12 +12,11 @@ class Client():
         self._db=db_name
         self._timeout = 10
         self._header = {'Content-type': 'application/json'}
-        self._rs = requests.Session()
         self.__check__()
 
     def __check__(self):
         socket.setdefaulttimeout(self._timeout)
-        s = socket.socket(sock.AF_INET, sock.SOCK_STREAM)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         check_result = s.connect_ex((self._host, self._port))
         if check_result == 0:
             print("{}:{} can be arrived!".format(self._host, self._port))

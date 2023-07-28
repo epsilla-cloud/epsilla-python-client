@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-#
-# 1.
-# 2.
-# pip3 install --upgrade pyepsilla
+# Try this simple example
+# 1. docker run -d -p 8888:8888 epsilla/vectordb
+# 2. pip3 install --upgrade pyepsilla
+# 3. python3 simple_example.py
 
 from pyepsilla import vectordb
 
 
 ## 1.Connect to Epsilla VectorDB
-c = vectordb.Client(host='127.0.0.1', port='8888', database='default')
+c = vectordb.Client(host='127.0.0.1', port='8888', db_name='default')
 
 ##
 status_code, response = c.welcome()
