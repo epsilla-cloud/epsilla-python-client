@@ -12,17 +12,17 @@ class Client():
         self._db=db_name
         self._timeout = 10
         self._header = {'Content-type': 'application/json'}
-        self.__check__()
+        self.check_networking()
 
-    def __check__(self):
+    def check_networking(self):
         socket.setdefaulttimeout(self._timeout)
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         check_result = s.connect_ex((self._host, int(self._port)))
-        if check_result == 0:
-            print("{}:{} can be arrived!".format(self._host, self._port))
-        else:
-            print("{}:{} cann't be arrived!".format(self._host, self._port))
         s.close()
+        if check_result == 0:
+            print("[INFO] {}:{} can be arrived!".format(self._host, self._port))
+        else:
+            raise Exception("[ERROR] {}:{} cann't be arrived!".format(self._host, self._port))
 
     def welcome(self):
         req_url = "{}/".format(self._baseurl)
@@ -44,7 +44,6 @@ class Client():
 
     def use_db(self, db_name):
         self._db = db_name
-        pass
 
     def load_db(self, db_name, db_path):
         req_url = "{}/api/load".format(self._baseurl)
