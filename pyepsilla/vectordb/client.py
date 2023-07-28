@@ -1,19 +1,29 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import json, requests
+import json, requests, socket
 
 class Client():
     def __init__(self, host='localhost', port='8888', db_name='default'):
         self._protocol = "http"
-        self._baseurl = "{}://{}:{}".format(self._protocol, host, port)
+        self._host = host
+        self._port = port
+        self._baseurl = "{}://{}:{}".format(self._protocol, self._host, self._port)
         self._db=db_name
-        self._timeout = 5
+        self._timeout = 10
         self._header = {'Content-type': 'application/json'}
         self._rs = requests.Session()
+        self.__check__()
 
     def __check__(self):
-
+        socket.setdefaulttimeout(self._timeout)
+        s = socket.socket(sock.AF_INET, sock.SOCK_STREAM)
+        check_result = s.connect_ex((self._host, self._port))
+        if check_result == 0:
+            print("{}:{} can be arrived!".format(self._host, self._port))
+        else:
+            print("{}:{} cann't be arrived!".format(self._host, self._port))
+        s.close()
 
     def welcome(self):
         req_url = "{}/".format(self._baseurl)
