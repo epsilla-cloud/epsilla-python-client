@@ -3,6 +3,17 @@
 
 from enum import IntEnum
 
+
+class DB():
+    def __init__(self):
+        pass
+
+
+class Table():
+    def __init__(self):
+        pass
+
+
 class Field():
     def __init__(self, name, data_type, primary_key, dimensions, ):
         pass

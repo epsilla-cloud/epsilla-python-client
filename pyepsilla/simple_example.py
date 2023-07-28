@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
+#
+# 1.
+# 2.
 # pip3 install --upgrade pyepsilla
 
 from pyepsilla import vectordb
@@ -10,14 +13,14 @@ from pyepsilla import vectordb
 c = vectordb.Client(host='127.0.0.1', port='8888', database='default')
 
 ##
-status, body = c.welcome()
-status, body = c.state()
+status_code, response = c.welcome()
+status_code, response = c.state()
 
 ## Load DB with path
-c.load(dbname="myDB", path="/tmp/epsilla")
+status_code, response= c.load_db(db_name="myDB", db_path="/tmp/epsilla")
 
 ## Set DB to current DB
-c.use(dbname="myDB")
+c.use_db(db_name="myDB")
 
 ## Unload DB
 # c.unload(dbname="myDB")
@@ -28,7 +31,7 @@ doc_field = {"name": "Doc", "dataType": "STRING"}
 vec_field = {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": 4}
 
 fields = [id_field, doc_field, vec_field]
-c.create_table(tablename="MyTable", fields=fields)
+status_code, response = c.create_table(table_name="MyTable", table_fields=fields)
 
 ## Insert new vector records into table
 Ids = [ i for i in range(5)]
@@ -41,18 +44,18 @@ Embedding =[[0.05, 0.61, 0.76, 0.74],
       ]
 
 records_data = [ {"ID": i, "Doc": Docs[i], "Embedding": Embedding[i]} for i in Ids]
-c.insert(tablename="MyTable", records=records_data)
+status_code, response = c.insert(table_name="MyTable", records=records_data)
 
 ## query vector
 queryField = "Embedding"
 queryVector = [0.35, 0.55, 0.47, 0.94]
 response = ["Doc"]
 limit = 2
-c.query(tablename="MyTable", queryField=queryField, queryVector=queryVector, response=response, limit=limit)
+status_code, response = c.query(table_name="MyTable", query_field=queryField, query_vector=queryVector, response_fields=response, limit=limit)
 
 ## drop table
-c.drop_table("MyTable")
+status_code, response = c.drop_table("MyTable")
 
 ## drop db
-c.drop_db("myDB")
+status_code, response = c.drop_db("myDB")
 
