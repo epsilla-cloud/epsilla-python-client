@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyepsilla',
-    version= '0.0.3',
+    version= '0.0.4',
     keywords='epsilla',
     author= 'Epsilla Team',
     description='Epsilla Python SDK',
