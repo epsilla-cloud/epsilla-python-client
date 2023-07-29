@@ -11,7 +11,7 @@ from pyepsilla import vectordb
 import random, string, time
 
 ## Connect to Epsilla VectorDB
-c = vectordb.Client(host='127.0.0.1', port='8888', db_name='default')
+c = vectordb.Client(host='127.0.0.1', port='8888')
 # c = vectordb.Client(host='3.209.6.179', port='8888', db_name='default')
 
 ## Check VectorDB Status
@@ -33,7 +33,7 @@ c.use_db(db_name="myDB")
 records_num = 3000
 dimensions = 8
 
-id_field = {"name": "ID", "dataType": "INT", "primaryKey": True}
+id_field = {"name": "ID", "dataType": "INT"}
 doc_field = {"name": "Doc", "dataType": "STRING"}
 vec_field = {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": dimensions}
 
