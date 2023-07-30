@@ -9,6 +9,7 @@ setup(
     keywords='epsilla',
     author= 'Epsilla Team',
     description='Epsilla Python SDK',
+    long_description='Epsilla Python SDK',
     license='Apache License',
     packages=find_packages(),
     include_package_data=True,
