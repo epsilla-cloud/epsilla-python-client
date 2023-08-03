@@ -43,11 +43,13 @@ class Client():
     def use_db(self, db_name):
         self._db = db_name
 
-    def load_db(self, db_name, db_path, vector_scale=None):
+    def load_db(self, db_name, db_path, vector_scale=None, wal_enabled=None):
         req_url = "{}/api/load".format(self._baseurl)
         req_data= {"name": db_name, "path": db_path}
         if vector_scale is not None:
             req_data["vectorScale"] = vector_scale
+        if wal_enabled is not None:
+            req_data["walEnabled"] = wal_enabled
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
@@ -92,6 +94,15 @@ class Client():
         body = res.json()
         return status_code, body
 
+    def get(self, table_name="MyTable", response_fields=[]):
+        if self._db is None:
+            raise Exception("[ERROR] Please use_db() first!")
+        req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
+        req_data= {"table": table_name, "response": response_fields}
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
 
     def drop_table(self, table_name="MyTable"):
         if self._db is None:
