@@ -84,11 +84,11 @@ class Client():
         return status_code, body
 
 
-    def query(self, table_name="MyTable", query_field="", query_vector=[], response_fields=[], limit=1):
+    def query(self, table_name="MyTable", query_field="", query_vector=[], response_fields=[], limit=1, with_distance=False):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         req_url = "{}/api/{}/data/query".format(self._baseurl, self._db)
-        req_data= {"table": table_name, "queryField": query_field, "queryVector": query_vector, "response": response_fields, "limit": limit}
+        req_data= {"table": table_name, "queryField": query_field, "queryVector": query_vector, "response": response_fields, "limit": limit, "withDistance": with_distance}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
