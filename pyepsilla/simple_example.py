@@ -66,7 +66,7 @@ query_vector = Embedding[-1]
 print(Docs[-1], query_vector)
 response_fields = ["Doc"]
 limit = 2
-status_code, response = c.query(table_name="MyTable", query_field=query_field, query_vector=query_vector, response_fields=response_fields, limit=limit)
+status_code, response = c.query(table_name="MyTable", query_field=query_field, query_vector=query_vector, response_fields=response_fields, limit=limit, with_distance=True)
 print("status_code", status_code, "response", response)
 
 ## Drop table
