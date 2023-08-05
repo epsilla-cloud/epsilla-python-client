@@ -49,5 +49,14 @@ class Client {
     return response.status, response.data;
   }
 
-  // Add the remaining methods here, following the same structure and logic as in the Python client
+  use_db(db_name: string) {
+    this.db = db_name;
+  }
+
+  async load_db(db_name: string, db_path: string, vector_scale?: number, wal_enabled?: boolean) {
+    const response = await axios.post(`${this.baseurl}/api/load`, { name: db_name, path: db_path, vectorScale: vector_scale, walEnabled: wal_enabled }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  // Add the remaining methods `unload_db`, `create_table`, `insert`, `query`, `get`, `drop_table`, and `drop_db` here, following the same structure and logic as in the Python client
 }
