@@ -58,5 +58,38 @@ class Client {
     return response.status, response.data;
   }
 
-  // Add the remaining methods `unload_db`, `create_table`, `insert`, `query`, `get`, `drop_table`, and `drop_db` here, following the same structure and logic as in the Python client
+  async unload_db(db_name: string) {
+    const response = await axios.post(`${this.baseurl}/api/unload`, { name: db_name }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  async create_table(table_name: string, fields: any[]) {
+    const response = await axios.post(`${this.baseurl}/api/table/create`, { name: table_name, fields: fields }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  async insert(table_name: string, records: any[]) {
+    const response = await axios.post(`${this.baseurl}/api/insert`, { name: table_name, records: records }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  async query(table_name: string, topk: number, query: any) {
+    const response = await axios.post(`${this.baseurl}/api/query`, { name: table_name, topk: topk, query: query }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  async get(table_name: string, ids: any[]) {
+    const response = await axios.post(`${this.baseurl}/api/get`, { name: table_name, ids: ids }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  async drop_table(table_name: string) {
+    const response = await axios.post(`${this.baseurl}/api/table/drop`, { name: table_name }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  async drop_db(db_name: string) {
+    const response = await axios.post(`${this.baseurl}/api/drop`, { name: db_name }, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
 }
