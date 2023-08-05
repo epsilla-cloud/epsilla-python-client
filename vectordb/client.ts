@@ -39,5 +39,15 @@ class Client {
     }
   }
 
-  // Rest of the methods go here, mirroring the functionality of the Python Client class
+  async welcome() {
+    const response = await axios.get(`${this.baseurl}/`, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  async state() {
+    const response = await axios.get(`${this.baseurl}/state`, { headers: this.headers, timeout: this.timeout });
+    return response.status, response.data;
+  }
+
+  // Add the remaining methods here, following the same structure and logic as in the Python client
 }
