@@ -8,70 +8,54 @@
 #
 
 from pyepsilla import vectordb
-import random, string, time
 
-## Connect to Epsilla VectorDB
-c = vectordb.Client(host='127.0.0.1', port='8888')
-# c = vectordb.Client(host='3.209.6.179', port='8888', db_name='default')
+# Connect to Epsilla VectorDB
+client = vectordb.Client(host='127.0.0.1', port='8888')
 
-## Check VectorDB Status
-status_code, response = c.welcome()
-status_code, response = c.state()
+# Load DB with path
+status_code, response = client.load_db(db_name="MyDB", db_path="/tmp/epsilla")
+print(response)
 
-## Load DB with path
-status_code, response= c.load_db(db_name="myDB", db_path="/tmp/epsilla")
+# Set DB to current DB
+client.use_db(db_name="MyDB")
 
-## Set DB to current DB
-c.use_db(db_name="myDB")
+# Create a table with schema in current DB
+status_code, response = client.create_table(
+  table_name="MyTable",
+  table_fields=[
+    {"name": "ID", "dataType": "INT"},
+    {"name": "Doc", "dataType": "STRING"},
+    {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": 4}
+  ]
+)
+print(response)
 
-## Unload DB
-# c.unload(db_name="myDB")
+# Insert new vector records into table
+status_code, response = client.insert(
+  table_name="MyTable",
+  records=[
+    {"ID": 1, "Doc": "Berlin", "Embedding": [0.05, 0.61, 0.76, 0.74]},
+    {"ID": 2, "Doc": "London", "Embedding": [0.19, 0.81, 0.75, 0.11]},
+    {"ID": 3, "Doc": "Moscow", "Embedding": [0.36, 0.55, 0.47, 0.94]},
+    {"ID": 4, "Doc": "San Francisco", "Embedding": [0.18, 0.01, 0.85, 0.80]},
+    {"ID": 5, "Doc": "Shanghai", "Embedding": [0.24, 0.18, 0.22, 0.44]}
+  ]
+)
+print(response)
 
+# Query Vectors
+status_code, response = client.query(
+  table_name="MyTable",
+  query_field="Embedding",
+  query_vector=[0.35, 0.55, 0.47, 0.94],
+  limit=2
+)
+print(response)
 
-## Create a table with schema in current DB
-### define records number and vector dimension
-records_num = 3000
-dimensions = 8
+# Drop table
+status_code, response = client.drop_table("MyTable")
+print(response)
 
-id_field = {"name": "ID", "dataType": "INT"}
-doc_field = {"name": "Doc", "dataType": "STRING"}
-vec_field = {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": dimensions}
-
-fields = [id_field, doc_field, vec_field]
-status_code, response = c.create_table(table_name="MyTable", table_fields=fields)
-
-
-## Insert new vector records into table
-# Ids = [ i for i in range(5)]
-# Docs = ["Berlin", "London", "Moscow", "San Francisco", "Shanghai"]
-# Embedding =[[0.05, 0.61, 0.76, 0.74],
-#        [0.19, 0.81, 0.75, 0.11],
-#        [0.36, 0.55, 0.47, 0.94],
-#        [0.18, 0.01, 0.85, 0.80],
-#        [0.24, 0.18, 0.22, 0.44]
-#       ]
-
-## Insert new vector records
-letters = list(string.ascii_lowercase+string.ascii_uppercase+string.digits)
-Docs = [''.join(random.choices(letters, k=6)) for _ in range(records_num)]
-Embedding = [[random.random() for _ in range(dimensions)] for _ in range(records_num)]
-
-records_data = [ {"ID": i, "Doc": Docs[i], "Embedding": Embedding[i]} for i in range(records_num)]
-status_code, response = c.insert(table_name="MyTable", records=records_data)
-
-
-## Query Vectors
-query_field = "Embedding"
-query_vector = Embedding[-1]
-print(Docs[-1], query_vector)
-response_fields = ["Doc"]
-limit = 2
-status_code, response = c.query(table_name="MyTable", query_field=query_field, query_vector=query_vector, response_fields=response_fields, limit=limit, with_distance=True)
-print("status_code", status_code, "response", response)
-
-## Drop table
-#status_code, response = c.drop_table("MyTable")
-
-## Drop db
-#status_code, response = c.drop_db("myDB")
-
+# Unload db
+status_code, response = client.unload_db("MyDB")
+print(response)
