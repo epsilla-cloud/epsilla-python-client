@@ -62,9 +62,11 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def create_table(self, table_name="MyTable", table_fields=[]):
+    def create_table(self, table_name="MyTable", table_fields=None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
+        if table_fields is None:
+            table_fields = []
         req_url = "{}/api/{}/schema/tables".format(self._baseurl, self._db)
         req_data= {"name": table_name, "fields": table_fields}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
@@ -73,9 +75,11 @@ class Client():
         return status_code, body
 
 
-    def insert(self, table_name="MyTable", records=[]):
+    def insert(self, table_name="MyTable", records=None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
+        if records is None:
+            records = []
         req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         req_data= {"table": table_name, "data": records}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
@@ -84,9 +88,13 @@ class Client():
         return status_code, body
 
 
-    def query(self, table_name="MyTable", query_field="", query_vector=[], response_fields=[], limit=1, with_distance=False):
+    def query(self, table_name="MyTable", query_field="", query_vector=None, response_fields=None, limit=1, with_distance=False):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
+        if query_vector is None:
+            query_vector = []
+        if response_fields is None:
+            response_fields = []
         req_url = "{}/api/{}/data/query".format(self._baseurl, self._db)
         req_data= {"table": table_name, "queryField": query_field, "queryVector": query_vector, "response": response_fields, "limit": limit, "withDistance": with_distance}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
@@ -94,9 +102,11 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def get(self, table_name="MyTable", response_fields=[]):
+    def get(self, table_name="MyTable", response_fields=None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
+        if response_fields is None:
+            response_fields = []
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
         req_data= {"table": table_name, "response": response_fields}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
