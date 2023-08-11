@@ -12,7 +12,7 @@ import h5py, datetime
 
 
 
-## Connect to epsilladb
+## Connect to Epsilla vector database
 c = vectordb.Client(host='127.0.0.1', port='8888')
 c.load_db(db_name="benchmark", db_path="/tmp/epsilla", vector_scale=1000000, wal_enabled=False)
 c.use_db(db_name="benchmark")
