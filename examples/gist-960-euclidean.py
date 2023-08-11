@@ -30,6 +30,10 @@ vec_field = {"name": "vector", "dataType": "VECTOR_FLOAT", "dimensions": dimensi
 fields = [id_field, vec_field]
 status_code, response = c.create_table(table_name="benchmark", table_fields=fields)
 
+## Insert 20000 data into table
+# records_data = [ {"id": i, "vector": training_data[i].tolist()} for i in range(20000)]
+# c.insert(table_name="benchmark", records=records_data)
+
 ## Insert all data into table
 indexs = [ i for i in range(0, records_num+10000, 50000)]
 for i in range(len(indexs)-1):

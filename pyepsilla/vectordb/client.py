@@ -63,7 +63,7 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def create_table(self, table_name: str = "MyTable", table_fields: [str] = None):
+    def create_table(self, table_name: str = "MyTable", table_fields: list[str] = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if table_fields is None:
@@ -75,7 +75,7 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def insert(self, table_name: str = "MyTable", records: [] = None):
+    def insert(self, table_name: str = "MyTable", records: list = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if records is None:
@@ -87,7 +87,7 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def query(self, table_name: str = "MyTable", query_field: str = "", query_vector: [] = None, response_fields: [] = None, limit: int = 1,
+    def query(self, table_name: str = "MyTable", query_field: str = "", query_vector: list = None, response_fields: list = None, limit: int = 1,
               with_distance: bool = False):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
@@ -103,7 +103,7 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def get(self, table_name: str = "MyTable", response_fields: [] =None):
+    def get(self, table_name: str = "MyTable", response_fields: list =None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if response_fields is None:
@@ -115,7 +115,7 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def drop_table(self, table_name: str = "MyTable"):
+    def drop_table(self, table_name: str = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         req_url = "{}/api/{}/schema/tables/{}".format(self._baseurl, self._db, table_name)
