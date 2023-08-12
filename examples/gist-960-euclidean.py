@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 # Try this gist-960-euclidean benchmark example
-# 1. docker run --pull=always -d -p 8888:8888 epsilla/vectordb
+# 1. docker run --pull=always -d -p 8888:8888 epsilla/vectordb "-r false"
 # 2. pip3 install --upgrade pyepsilla
 # 3. wget http://ann-benchmarks.com/gist-960-euclidean.hdf5
 # 4. python3 gist-960-euclidean.py
@@ -43,6 +43,9 @@ for i in range(len(indexs)-1):
     c.insert(table_name="benchmark", records=records_data)
     end = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     print("START:", start, "\nEND  :", end)
+
+## Rebuild ann graph, it will wait until rebuild is finished, wait time is depended on the amount of dataset
+c.rebuild()
 
 ## Query Vectors
 query_field = "vector"
