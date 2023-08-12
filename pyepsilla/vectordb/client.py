@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import json, requests, socket
+import json, requests, socket, datetime
 
 
 class Client():
@@ -91,7 +91,10 @@ class Client():
         req_url = "{}/api/rebuild".format(self._baseurl)
         req_data = None
         print("[INFO] waiting until rebuild is finished ...")
+        start_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header, timeout=timeout)
+        end_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        print("[INFO] Start Time:{}\n       End   Time:{}".format(start_time, end_time))
         status_code = res.status_code
         body = res.json()
         return status_code, body
