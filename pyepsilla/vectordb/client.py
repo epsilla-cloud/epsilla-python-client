@@ -90,6 +90,7 @@ class Client():
     def rebuild(self, timeout: int = 7200):
         req_url = "{}/api/rebuild".format(self._baseurl)
         req_data = None
+        print("[INFO] waiting until rebuild is finished ...")
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header, timeout=timeout)
         status_code = res.status_code
         body = res.json()
