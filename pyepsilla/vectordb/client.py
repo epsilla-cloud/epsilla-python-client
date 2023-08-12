@@ -87,6 +87,14 @@ class Client():
         body = res.json()
         return status_code, body
 
+    def rebuild(self, timeout: int = 7200):
+        req_url = "{}/api/rebuild".format(self._baseurl)
+        req_data = None
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header, timeout=timeout)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
+
     def query(self, table_name: str = "MyTable", query_field: str = "", query_vector: list = None, response_fields: list = None, limit: int = 1,
               with_distance: bool = False):
         if self._db is None:
