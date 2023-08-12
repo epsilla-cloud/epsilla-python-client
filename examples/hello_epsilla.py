@@ -13,6 +13,7 @@ from pyepsilla import vectordb
 client = vectordb.Client(host='127.0.0.1', port='8888')
 
 # Load DB with path
+## pay attention to change db_path to persistent volume for production environment
 status_code, response = client.load_db(db_name="MyDB", db_path="/tmp/epsilla")
 print(response)
 
