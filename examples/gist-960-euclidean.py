@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-# Try this simple example
+# Try this gist-960-euclidean benchmark example
 # 1. docker run --pull=always -d -p 8888:8888 epsilla/vectordb
 # 2. pip3 install --upgrade pyepsilla
 # 3. wget http://ann-benchmarks.com/gist-960-euclidean.hdf5
