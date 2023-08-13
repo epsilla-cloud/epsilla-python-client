@@ -49,6 +49,7 @@ status_code, response = client.query(
   table_name="MyTable",
   query_field="Embedding",
   query_vector=[0.35, 0.55, 0.47, 0.94],
+  response_fields = ["Doc"],
   limit=2
 )
 print(response)
