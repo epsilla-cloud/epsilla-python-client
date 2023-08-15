@@ -44,7 +44,16 @@ status_code, response = client.insert(
 )
 print(response)
 
-# Query Vectors
+# Query Vectors with specific response field
+status_code, response = client.query(
+  table_name="MyTable",
+  query_field="Embedding",
+  query_vector=[0.35, 0.55, 0.47, 0.94],
+  response_fields = ["Doc"],
+  limit=2
+)
+
+# Query Vectors without specific response field, then it will return all fields
 status_code, response = client.query(
   table_name="MyTable",
   query_field="Embedding",
