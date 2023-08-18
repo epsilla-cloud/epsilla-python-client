@@ -9,12 +9,18 @@
 
 from pyepsilla import vectordb
 import h5py, datetime
-
+from urllib.parse import urlparse
 
 ## Connect to Epsilla vector database
 client = vectordb.Client(host='127.0.0.1', port='8888')
 client.load_db(db_name="benchmark", db_path="/tmp/epsilla", vector_scale=1000000, wal_enabled=False) ## pay attention to change db_path to persistent volume for production environment
 client.use_db(db_name="benchmark")
+
+## Check gist-960-euclidean dataset hdf5 file to download or not
+dataset_download_url = "http://ann-benchmarks.com/gist-960-euclidean.hdf5"
+dataset_filename = os.path.basename(urlparse(dataset_download_url).path)
+if not os.path.isfile(dataset_filename):
+    os.system("wget --no-check-certificate {}".format(dataset_download_url))
 
 ## Read gist-960-euclidean data from hdf5
 f = h5py.File('gist-960-euclidean.hdf5', 'r')
@@ -35,6 +41,7 @@ status_code, response = client.create_table(table_name="benchmark", table_fields
 
 ## Insert all data into table
 indexs = [ i for i in range(0, records_num+10000, 50000)]
+print("Begin to insert all gist data into table ...")
 for i in range(len(indexs)-1):
     print("-"*20)
     start=datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
@@ -47,7 +54,7 @@ for i in range(len(indexs)-1):
 ## Rebuild ann graph, it will wait until rebuild is finished, wait time is depended on the amount of dataset
 client.rebuild()
 
-## Query Vectors
+## Query vectors
 query_field = "vector"
 query_vector = training_data[40000].tolist()
 response_fields = ["id"]
