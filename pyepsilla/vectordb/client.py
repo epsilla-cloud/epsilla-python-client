@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-
-import json, requests, socket, datetime
+import json
+import requests
+import socket
+import datetime
 
 
 class Client():
@@ -75,6 +77,15 @@ class Client():
         body = res.json()
         return status_code, body
 
+    def list_tables(self):
+        if self._db is None:
+            raise Exception("[ERROR] Please use_db() first!")
+        req_url = "{}/api/{}/schema/tables/show".format(self._baseurl, self._db)
+        res = requests.get(url=req_url, headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
+
     def insert(self, table_name: str = "MyTable", records: list = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
@@ -99,8 +110,14 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def query(self, table_name: str = "MyTable", query_field: str = "", query_vector: list = None, response_fields: list = None, limit: int = 1,
-              with_distance: bool = False):
+    def query(
+        self, table_name: str = "MyTable",
+        query_field: str = "",
+        query_vector: list = None,
+        response_fields: list = None,
+        limit: int = 1,
+        with_distance: bool = False
+    ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if query_vector is None:
@@ -115,7 +132,7 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def get(self, table_name: str = "MyTable", response_fields: list =None):
+    def get(self, table_name: str = "MyTable", response_fields: list = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if response_fields is None:
