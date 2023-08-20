@@ -31,6 +31,10 @@ status_code, response = client.create_table(
 )
 print(response)
 
+# Get a list of table names in current DB
+status_code, response = client.list_tables()
+print(response)
+
 # Insert new vector records into table
 status_code, response = client.insert(
   table_name="MyTable",
