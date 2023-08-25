@@ -3,3 +3,6 @@
 
 from .client import Client
 from .field import Field, FieldType
+from .sentry import init_sentry
+
+init_sentry()
