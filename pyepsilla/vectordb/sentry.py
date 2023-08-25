@@ -19,14 +19,6 @@ try:
 except Exception:
     pass
 
-
-def filter_info(event, _hint):
-    try:
-        pass
-    except Exception:
-        pass
-    return event
-
 def callback(pending, timeout):
     sys.stderr.flush()
 
@@ -37,12 +29,6 @@ def init_sentry():
                 dsn=SENTRY_DSN,
                 release=__version__,
                 traces_sample_rate=1.0,
-                include_local_variables=True,
-                send_default_pii=True,
-                attach_stacktrace=True,
-                before_send=filter_info,
-                include_source_context=True,
-                debug=False,
                 integrations=[AtexitIntegration(callback=callback)],
             )
             uuid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
