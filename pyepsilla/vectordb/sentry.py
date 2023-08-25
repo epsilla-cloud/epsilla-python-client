@@ -13,7 +13,7 @@ CONFIG_URL = "https://config.epsilla.com/candidate.json"
 SENTRY_DSN = "https://572e9319627537c3d25b13e4d5437ca9@o4505728621412352.ingest.sentry.io/4505728624558080"
 
 try:
-    r = requests.get(CONFIG_URL, timeout=2)
+    r = requests.get(CONFIG_URL, headers={"Agent": "PyEpsilla"}, timeout=2)
     if r.status_code == 200:
         SENTRY_DSN = r.json()["sentry"][0]
 except Exception:
