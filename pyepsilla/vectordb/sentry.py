@@ -25,14 +25,16 @@ def callback(pending, timeout):
 def init_sentry():
     if "SENTRY_DISABLE" not in os.environ:
         try:
+            uid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
+            sentry_sdk.set_tag("uid", uid)
             sentry_sdk.init(
                 dsn=SENTRY_DSN,
                 release=__version__,
                 traces_sample_rate=1.0,
                 integrations=[AtexitIntegration(callback=callback)],
             )
-            init_id = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
-            sentry_sdk.capture_message("PyEpsilla Init at {}".format(init_id), "info")
+
+            sentry_sdk.capture_message("PyEpsilla Init at {}".format(uid), "info")
         except Exception:
             sentry_sdk.flush()
             pass
