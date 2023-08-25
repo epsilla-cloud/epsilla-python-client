@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 # Sentry collects crash reports and performance numbers
-# It is possible to turn off data collection using an environment variable named "SENTRY_OPT_OUT"
+# It is possible to turn off data collection using an environment variable named "SENTRY_DISABLE"
 
 import os, sys, uuid, hashlib, requests
 import sentry_sdk
@@ -23,7 +23,7 @@ def callback(pending, timeout):
     sys.stderr.flush()
 
 def init_sentry():
-    if "SENTRY_OPT_OUT" not in os.environ:
+    if "SENTRY_DISABLE" not in os.environ:
         try:
             sentry_sdk.init(
                 dsn=SENTRY_DSN,
