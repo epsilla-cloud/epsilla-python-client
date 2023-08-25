@@ -31,8 +31,8 @@ def init_sentry():
                 traces_sample_rate=1.0,
                 integrations=[AtexitIntegration(callback=callback)],
             )
-            uuid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
-            sentry_sdk.capture_message("PyEpsilla Init at {}".format(uuid), "info")
+            init_id = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
+            sentry_sdk.capture_message("PyEpsilla Init at {}".format(init_id), "info")
         except Exception:
             sentry_sdk.flush()
             pass
