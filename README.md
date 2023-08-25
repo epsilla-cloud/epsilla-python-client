@@ -3,7 +3,7 @@
 Welcome to Python SDK for Epsilla Vector Database! 
 https://pypi.org/project/pyepsilla/#history
 
-## 1.Installation
+## Installation
 ```shell
 pip3 install pyepsilla
 ```
@@ -12,15 +12,15 @@ or
 pip3 install --upgrade pyepsilla
 ```
 
-## 2.Documentation
+## Documentation
 
-### 2.1 Run epsilla vectordb on localhost
+### Run epsilla vectordb on localhost
 ```shell
 docker pull epsilla/vectordb
 docker run -d -p 8888:8888 epsilla/vectordb
 ```
 
-### 2.2 Use pyepsilla to connect to and interact with vector database
+### Use pyepsilla to connect to and interact with vector database
 
 ```python
 from pyepsilla import vectordb
@@ -57,7 +57,7 @@ client.insert(
   ]
 )
 
-## search
+## search with specific response field
 status_code, response = client.query(
   table_name="MyTable",
   query_field="Embedding",
@@ -67,16 +67,27 @@ status_code, response = client.query(
 )
 print(response)
 
+# search without specific response field, then it will return all fields
+status_code, response = client.query(
+  table_name="MyTable",
+  query_field="Embedding",
+  query_vector=[0.35, 0.55, 0.47, 0.94],
+  limit=2
+)
+print(response)
+
+
 ## drop a table
-client.drop_table("MyTable")
+#client.drop_table("MyTable")
 
 ## unload a database from memory
-client.unload_db("MyDB")
+#client.unload_db("MyDB")
 ```
 
-## 3.FAQ
+## Contributing
+Bug reports and pull requests are welcome on GitHub at https://github.com/epsilla-cloud/epsilla-python-client/
 
-https://pypi.org/project/pyepsilla/#history
+If you have any question or problem, please join our discord https://discord.com/invite/cDaY2CxZc5
 
 ## We love your <a href="https://forms.gle/z73ra1sGBxH9wiUR8">Feedback</a>!
 
