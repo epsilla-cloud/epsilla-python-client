@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyepsilla',
-    version= '0.1.7',
+    version=open("./pyepsilla/vectordb/version.py").read().split("'")[-2],
     keywords='epsilla',
     author= 'Epsilla Team',
     description='Epsilla Python SDK',
