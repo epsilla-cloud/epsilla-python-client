@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import sys
-sys.path.insert(0, ".")
 from setuptools import setup, find_packages
-from pyepsilla.vectordb.version import __version__
 
 setup(
     name='pyepsilla',
-    version=__version__,
+    version=open("./pyepsilla/vectordb/version.py").read().split("'")[-2],
     keywords='epsilla',
     author= 'Epsilla Team',
     description='Epsilla Python SDK',
