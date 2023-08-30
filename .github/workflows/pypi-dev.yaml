@@ -1,7 +1,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Upload Python Package
+name: Build Python Package on Dev Branch
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip twine
-        pip install build
-    - name: Build package
-      run: python -m build --sdist --wheel --outdir dist/ .
+        pip install -r requirements.txt
+        python -m pip install --upgrade pip twine build
+        python -m build --sdist --wheel --outdir dist/ .
+
