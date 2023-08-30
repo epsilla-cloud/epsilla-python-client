@@ -2,10 +2,11 @@
 # -*- coding:utf-8 -*-
 
 from setuptools import setup, find_packages
+from .pyepsilla.vectordb.version import __version__
 
 setup(
     name='pyepsilla',
-    version=open("./pyepsilla/vectordb/version.py").read().split("'")[-2],
+    version=__version__,
     keywords='epsilla',
     author= 'Epsilla Team',
     description='Epsilla Python SDK',
