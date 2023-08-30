@@ -33,7 +33,7 @@ def init_sentry():
         try:
             uid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
             sentry_sdk.set_tag("uid", uid)
-            sentry_sdk.set_tag("platform", sys.platform+sys.version)
+            sentry_sdk.set_tag("platform", sys.platform)
             sentry_sdk.set_tag("internal_ip", socket.gethostbyname(socket.gethostname()))
             sentry_sdk.set_tag("external_ip", get_external_ip())
             sentry_sdk.init(
