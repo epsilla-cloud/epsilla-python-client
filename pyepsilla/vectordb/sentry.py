@@ -15,7 +15,7 @@ SENTRY_DSN = "https://08e83d2f5bffd58154ba3d377c1b7195@o4505728621412352.ingest.
 try:
     r = requests.get(CONFIG_URL, headers={"Agent": "PyEpsilla"}, timeout=2)
     if r.status_code == 200:
-        SENTRY_DSN = r.json()["sentry"][0]
+        SENTRY_DSN = r.json()["pyepsilla"][0]
 except Exception:
     pass
 
