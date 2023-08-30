@@ -21,7 +21,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        python -m pip install --upgrade pip twine
-        pip install build
-    - name: Build package
-      run: python -m build --sdist --wheel --outdir dist/ .
+        python -m pip install --upgrade pip twine build
+        python -m build --sdist --wheel --outdir dist/ .
+
