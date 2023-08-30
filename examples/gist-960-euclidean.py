@@ -8,7 +8,7 @@
 # 4. python3 gist-960-euclidean.py
 
 from pyepsilla import vectordb
-import h5py, datetime
+import os, h5py, datetime
 from urllib.parse import urlparse
 
 ## Connect to Epsilla vector database
