@@ -32,10 +32,13 @@ def init_sentry():
     if "SENTRY_DISABLE" not in os.environ:
         try:
             uid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
+            internal_ip = socket.gethostbyname(socket.gethostname())
+            external_ip = get_external_ip()
             sentry_sdk.set_tag("uid", uid)
             sentry_sdk.set_tag("platform", sys.platform)
-            sentry_sdk.set_tag("internal_ip", socket.gethostbyname(socket.gethostname()))
-            sentry_sdk.set_tag("external_ip", get_external_ip())
+            sentry_sdk.set_tag("internal_ip", internal_ip)
+            sentry_sdk.set_tag("external_ip", external_ip)
+            sentry_sdk.set_user({"uid": uid, "username": "{}-{}-{}".format(socket.gethostname(), internal_ip, external_ip)})
             sentry_sdk.init(
                 dsn=SENTRY_DSN,
                 release=__version__,
@@ -43,7 +46,7 @@ def init_sentry():
                 integrations=[AtexitIntegration(callback=callback)],
             )
 
-            sentry_sdk.capture_message("PyEpsilla Init at {}".format(uid), "info")
+            sentry_sdk.capture_message("PyEpsilla Init", "info")
         except Exception:
             sentry_sdk.flush()
             pass
