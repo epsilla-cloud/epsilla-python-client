@@ -38,7 +38,7 @@ def init_sentry():
             sentry_sdk.set_tag("platform", sys.platform)
             sentry_sdk.set_tag("internal_ip", internal_ip)
             sentry_sdk.set_tag("external_ip", external_ip)
-            sentry_sdk.set_user({"uid": uid, "username": "{}-{}-{}".format(socket.gethostname(), internal_ip, external_ip)})
+            sentry_sdk.set_user({"id": uid, "ip_address": "{{auto}}", "username": "{}-{}-{}".format(socket.gethostname(), internal_ip, external_ip)})
             sentry_sdk.init(
                 dsn=SENTRY_DSN,
                 release=__version__,
