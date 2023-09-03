@@ -45,7 +45,7 @@ print("Begin to insert all gist data into table ...")
 for i in range(len(indexs)-1):
     print("-"*20)
     start=datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-    # print(indexs[i], indexs[i+1])
+    print(indexs[i], indexs[i+1])
     records_data = [{"id": i, "vector": training_data[i].tolist()} for i in range(indexs[i], indexs[i+1])]
     client.insert(table_name="benchmark", records=records_data)
     end = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
