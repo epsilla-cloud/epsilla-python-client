@@ -98,6 +98,19 @@ class Client():
         body = res.json()
         return status_code, body
 
+    def delete_by_pk(self, table_name: str = "MyTable", ids: list[str | int] = None):
+        """Delete records by primay keys."""
+        if self._db is None:
+            raise Exception("[ERROR] Please use_db() first!")
+        if ids is None:
+            raise Exception("[ERROR] Please provide primary key list to delete record(s).")
+        req_url = "{}/api/{}/data/delete".format(self._baseurl, self._db)
+        req_data = {"table": table_name, "primaryKeys": ids}
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
+
     def rebuild(self, timeout: int = 7200):
         req_url = "{}/api/rebuild".format(self._baseurl)
         req_data = None
