@@ -25,8 +25,9 @@ class SentenceTransformerEmbeddingFunction(EmbeddingFunction):
     # Since we do dynamic imports we have to type this as Any
     models: Dict[str, Any] = {}
 
-    # If you have a beefier machine, try "gtr-t5-large".
-    # for a full list of options: https://huggingface.co/sentence-transformers, https://www.sbert.net/docs/pretrained_models.html
+    # for a full list of options:
+    # https://www.sbert.net/docs/pretrained_models.html#sentence-embedding-models/
+    # https://huggingface.co/sentence-transformers,
     def __init__(
         self,
         model_name: str = "all-MiniLM-L6-v2",
