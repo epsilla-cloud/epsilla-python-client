@@ -21,7 +21,7 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'requests>=2.19.1',
+        'requests',
         'sentry_sdk'
     ],
     url='https://github.com/epsilla-cloud/pyepsilla',

@@ -4,7 +4,7 @@
 # Sentry collects crash reports and performance numbers
 # It is possible to turn off data collection using an environment variable named "SENTRY_DISABLE"
 
-import os, sys, uuid, hashlib, socket, requests
+import os, sys, platform, uuid, hashlib, socket, requests
 import sentry_sdk
 from sentry_sdk.integrations.atexit import AtexitIntegration
 from .version import __version__
@@ -32,10 +32,45 @@ def init_sentry():
     if "SENTRY_DISABLE" not in os.environ:
         try:
             uid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
+            internal_ip = socket.gethostbyname(socket.gethostname())
+            external_ip = get_external_ip()
             sentry_sdk.set_tag("uid", uid)
-            sentry_sdk.set_tag("platform", sys.platform)
-            sentry_sdk.set_tag("internal_ip", socket.gethostbyname(socket.gethostname()))
-            sentry_sdk.set_tag("external_ip", get_external_ip())
+            sentry_sdk.set_tag("internal_ip", internal_ip)
+            sentry_sdk.set_tag("external_ip", external_ip)
+            sentry_sdk.set_user({'ip_address': '{{auto}}'})
+            sentry_sdk.set_user({"username": "{}-{}-{}".format(socket.gethostname(), internal_ip, external_ip)})
+            sentry_sdk.set_tag("version", platform.version())
+            sentry_sdk.set_tag("platform", "{}-{}".format(sys.platform, platform.machine()))
+            # system = platform.system()
+            # if system == "Darwin":
+            #     sentry_sdk.set_context(
+            #         "mac",
+            #         {
+            #             "type": "os",
+            #             "name": "macOS",
+            #             "version": platform.mac_ver()[0],
+            #             "kernel_version": platform.uname().release,
+            #         },
+            #     )
+            # if system == "Linux":
+            #     sentry_sdk.set_context(
+            #         "linux",
+            #         {
+            #             "type": "os",
+            #             "name": "Linux",
+            #             "version": platform.release(),
+            #             "build": platform.version(),
+            #         },
+            #     )
+            # if system == "Windows":
+            #     sentry_sdk.set_context(
+            #         "windows",
+            #         {
+            #             "type": "os",
+            #             "name": "Windows",
+            #             "version": platform.version(),
+            #         },
+            #     )
             sentry_sdk.init(
                 dsn=SENTRY_DSN,
                 release=__version__,
@@ -43,7 +78,7 @@ def init_sentry():
                 integrations=[AtexitIntegration(callback=callback)],
             )
 
-            sentry_sdk.capture_message("PyEpsilla Init at {}".format(uid), "info")
+            sentry_sdk.capture_message("PyEpsilla Init", "info")
         except Exception:
             sentry_sdk.flush()
             pass
