@@ -98,8 +98,8 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def delete_by_pk(self, table_name: str = "MyTable", ids: list[str | int] = None):
-        """Delete records by primay keys."""
+    def delete(self, table_name: str = "MyTable", ids: list[str | int] = None):
+        """Epsilla only supports delete records by primay keys for now."""
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if ids is None:
