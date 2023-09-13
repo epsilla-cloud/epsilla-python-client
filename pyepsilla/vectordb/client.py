@@ -129,6 +129,7 @@ class Client():
         query_vector: list = None,
         response_fields: list = None,
         limit: int = 1,
+        filter: str = "",
         with_distance: bool = False
     ):
         if self._db is None:
@@ -138,8 +139,15 @@ class Client():
         if response_fields is None:
             response_fields = []
         req_url = "{}/api/{}/data/query".format(self._baseurl, self._db)
-        req_data = {"table": table_name, "queryField": query_field, "queryVector": query_vector,
-                    "response": response_fields, "limit": limit, "withDistance": with_distance}
+        req_data = {
+            "table": table_name,
+            "queryField": query_field,
+            "queryVector": query_vector,
+            "response": response_fields,
+            "limit": limit,
+            "filter": filter,
+            "withDistance": with_distance
+        }
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
