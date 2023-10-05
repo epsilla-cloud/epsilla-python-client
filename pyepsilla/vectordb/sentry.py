@@ -41,36 +41,6 @@ def init_sentry():
             sentry_sdk.set_user({"username": "{}-{}-{}".format(socket.gethostname(), internal_ip, external_ip)})
             sentry_sdk.set_tag("version", platform.version())
             sentry_sdk.set_tag("platform", "{}-{}".format(sys.platform, platform.machine()))
-            # system = platform.system()
-            # if system == "Darwin":
-            #     sentry_sdk.set_context(
-            #         "mac",
-            #         {
-            #             "type": "os",
-            #             "name": "macOS",
-            #             "version": platform.mac_ver()[0],
-            #             "kernel_version": platform.uname().release,
-            #         },
-            #     )
-            # if system == "Linux":
-            #     sentry_sdk.set_context(
-            #         "linux",
-            #         {
-            #             "type": "os",
-            #             "name": "Linux",
-            #             "version": platform.release(),
-            #             "build": platform.version(),
-            #         },
-            #     )
-            # if system == "Windows":
-            #     sentry_sdk.set_context(
-            #         "windows",
-            #         {
-            #             "type": "os",
-            #             "name": "Windows",
-            #             "version": platform.version(),
-            #         },
-            #     )
             sentry_sdk.init(
                 dsn=SENTRY_DSN,
                 release=__version__,
