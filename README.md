@@ -39,7 +39,7 @@ client.use_db(db_name="MyDB")
 client.create_table(
   table_name="MyTable",
   table_fields=[
-    {"name": "ID", "dataType": "INT"},
+    {"name": "ID", "dataType": "INT", "primaryKey": True},
     {"name": "Doc", "dataType": "STRING"},
     {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": 4}
   ]

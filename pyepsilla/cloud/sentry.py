@@ -13,7 +13,7 @@ CONFIG_URL = "https://config.epsilla.com/candidate.json"
 SENTRY_DSN = "https://c705adb9ba9a5750ab5719c69021e3b0@o4505952171917312.ingest.sentry.io/4506031458746368"
 
 try:
-    r = requests.get(CONFIG_URL, headers={"Agent": "PyEpsilla"}, timeout=2)
+    r = requests.get(CONFIG_URL, headers={"Agent": "PyEpsilla Cloud Client"}, timeout=2)
     if r.status_code == 200:
         SENTRY_DSN = r.json()["pyepsilla"][0]
 except Exception:
@@ -48,7 +48,7 @@ def init_sentry():
                 integrations=[AtexitIntegration(callback=callback)],
             )
 
-            sentry_sdk.capture_message("PyEpsilla Init", "info")
+            sentry_sdk.capture_message("PyEpsilla Cloud Client Init", "info")
         except Exception:
             sentry_sdk.flush()
             pass

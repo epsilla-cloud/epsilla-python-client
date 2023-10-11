@@ -30,7 +30,7 @@ size = training_data.size
 records_num, dimensions = training_data.shape
 
 ## Create table for gist-960-euclidean
-id_field = {"name": "id", "dataType": "INT"}
+id_field = {"name": "id", "dataType": "INT", "primaryKey": True}
 vec_field = {"name": "vector", "dataType": "VECTOR_FLOAT", "dimensions": dimensions}
 fields = [id_field, vec_field]
 status_code, response = client.create_table(table_name="benchmark", table_fields=fields)
@@ -50,6 +50,10 @@ for i in range(len(indexs)-1):
     client.insert(table_name="benchmark", records=records_data)
     end = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     print("START:", start, "\nEND  :", end)
+
+
+## Delete some data by ids
+client.delete(table_name="benchmark", ids=[300033, 600066])
 
 ## Rebuild ann graph, it will wait until rebuild is finished, wait time is depended on the amount of dataset
 client.rebuild()
