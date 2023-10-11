@@ -31,7 +31,7 @@ class TelemetryManager:
 
         # We use a hashed ID to make sure telemetry data is anonymous
         self.machine_id = machineid.hashed_id("epsilla")
-        
+
         self.client = Posthog(
             POSTHOG_API_KEY,
             host=POSTHOG_HOST
@@ -41,12 +41,8 @@ class TelemetryManager:
         self.capture("pyepsilla initialized")
 
         TelemetryManager.singleton = self
-    
+
     def capture(self, event: str, properties: Optional[dict] = None):
         """Capture an event and send it to PostHog"""
         if self.client is not None:
             self.client.capture(self.machine_id, event, properties=properties)
-    
-    
-    
-
