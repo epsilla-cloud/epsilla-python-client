@@ -17,7 +17,7 @@ class Client(object):
         self._timeout = 10
         self._header = {'Content-type': 'application/json'}
     
-    def create_db():
+    def vectordb(self, db_id: str):
         pass
 
 
