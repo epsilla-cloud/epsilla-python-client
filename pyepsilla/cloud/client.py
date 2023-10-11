@@ -6,62 +6,82 @@ import socket
 import datetime
 
 
-class Client(Object):
-    def __init__(self, projectid: str, apikey: str):
+class Client(object):
+    def __init__(self, project_id: str, api_key: str):
         self._project_id = project_id
-        self._apikey = apikey
-        self._baseurl = "https://controller.cloud.epsilla.com"
+        self._apikey = api_key
+        self._baseurl = "https://dispatch.epsilla.com"
+
+ 
         self._db = None
         self._timeout = 10
         self._header = {'Content-type': 'application/json'}
-
-    def welcome(self):
-        req_url = "{}/".format(self._baseurl)
-        req_data = None
-        res = requests.get(url=req_url, data=json.dumps(req_data), headers=self._header, timeout=self._timeout)
-        status_code = res.status_code
-        body = res.text
-        return status_code, body
-
-
-
-    def get_all_projects(self):
+    
+    def create_db():
         pass
 
-    def get_project(self):
-        project_id: str = self._project_id
+
+class Vectordb(Client):
+    def __init__(self, projectid: str, apikey: str, db_id: str):
+        super().__init__(projectid, apikey)
+        ## check projectid and apikey is valid or not
+        self._check()
+        ## call dispatch to get vectordb real endpoint
+        self._endpoint = "{}/api/{}/vectordb".format(self._baseurl, self._project_id)
+
+    ## insert data into table
+    def insert():
+        pass
+    ## query data from table
+    def query():
+        pass
+    ## delete data from table
+    def delete():
         pass
 
-    def get_all_dbs(self):
-        project_id: str = self._project_id
-        pass
 
-    def get_db(self, db_uuid: str):
-        project_id: str = self._project_id
-        pass
+    # def get_all_projects(self):
+    #     pass
 
-    def create_db(self, db_uuid: str):
-        pass
+    # def get_project(self):
+    #     project_id: str = self._project_id
+    #     #return project info
+    #     pass
 
-    def delete_db(self, db_uuid: str):
-        pass
+    # def get_all_dbs(self):
+    #     project_id: str = self._project_id
+    #     pass
 
-    def load_db(self, db_uuid: str):
-        pass
+    # def get_db(self, db_uuid: str):
+    #     project_id: str = self._project_id
+    #     ##return db info, with public endpoint
+    #     pass
 
-    def unload_db(self, db_uuid: str):
-        pass
+    # def create_db(self, db_uuid: str):
+    #     ## invoke serverless 
+    #     pass
+
+    # def delete_db(self, db_uuid: str):
+    #     ## invoke serverless 
+    #     pass
+
+    # def load_db(self, db_uuid: str):
+    #     pass
+
+    # def unload_db(self, db_uuid: str):
+    #     pass
 
 
     def list_tables(self):
         pass
 
-
-    def create_table(self, table_name: str = "MyTable", table_fields: list[str] = None):
-        pass
+    # def create_table(self, table_name: str = "MyTable", table_fields: list[str] = None):
+    #     ## invoke serverless with schema
+    #     pass
 
 
     def insert(self, table_name: str = "MyTable", records: list = None):
+        requests.url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         pass
 
     def delete(self, table_name: str = "MyTable", ids: list[str | int] = None):
@@ -70,11 +90,12 @@ class Client(Object):
     def query(self, table_name: str = "MyTable", query_field: str = "", query_vector: list = None, response_fields: list = None, limit: int = 1, with_distance: bool = False):
         pass
 
-    def drop_table(self, table_name: str = None):
-        pass
+    # def drop_table(self, table_name: str = None):
+    #     ## invoke serverless with schema
+    #     pass
 
-    def drop_db(self, db_uuid: str):
-        pass
+    # def drop_db(self, db_uuid: str):
+    #     pass
 
 
 

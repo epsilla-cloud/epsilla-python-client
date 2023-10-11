@@ -10,7 +10,7 @@ from sentry_sdk.integrations.atexit import AtexitIntegration
 from .version import __version__
 
 CONFIG_URL = "https://config.epsilla.com/candidate.json"
-SENTRY_DSN = "https://08e83d2f5bffd58154ba3d377c1b7195@o4505728621412352.ingest.sentry.io/4505763445538816"
+SENTRY_DSN = "https://c705adb9ba9a5750ab5719c69021e3b0@o4505952171917312.ingest.sentry.io/4506031458746368"
 
 try:
     r = requests.get(CONFIG_URL, headers={"Agent": "PyEpsilla Cloud Client"}, timeout=2)
