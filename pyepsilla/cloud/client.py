@@ -1,101 +1,112 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import json
-import requests
-import socket
-import datetime
+import json, datetime, socket, requests, json, pprint
 
 
 class Client(object):
     def __init__(self, project_id: str, api_key: str):
         self._project_id = project_id
         self._apikey = api_key
-        self._baseurl = "https://dispatch.epsilla.com"
-
- 
-        self._db = None
+        self._baseurl = "https://dispatch.epsilla.com/api/v2/project/{}".format(self._project_id)
         self._timeout = 10
-        self._header = {'Content-type': 'application/json'}
+        self._header = {'Content-type': 'application/json', 'X-API-Key': api_key}
+
+
+    def validate(self):
+        res = requests.get(url=self._baseurl, data=None, headers=self._header)
+        return res.json()
+
+
+    def get_db_list(self):
+        db_list = []
+        req_url = "{}/vectordb/list".format(self._baseurl)
+        res = requests.get(url=req_url, data=None, headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        if status_code == 200 and body["statusCode"] == 200:
+            db_list = [ db_id for db_id in res.json()["result"] ]
+        return db_list
+
+
+    def get_db_info(self, db_id: str):
+        req_url = "{}/vectordb/{}".format(self._baseurl, db_id)
+        res = requests.get(url=req_url, data=None, headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
     
-    def create_db():
-        pass
+
+    def vectordb(self, db_id: str):
+        ## validate project_id and api_key
+        res = self.validate()
+        if res["statusCode"] != 200:
+            if res["statusCode"] == 404:
+                raise Exception("Invalid project_id")
+            if res["statusCode"] == 401:
+                raise Exception("Invalid api_key")
+
+        ## validate db_id
+        if not db_id in self.get_db_list():
+            raise Exception("Invalid db_id")
+        
+        ## fetch db public endpoint
+        status_code, resp = self.get_db_info(db_id=db_id)
+        if resp["statusCode"] == 200:
+            return Vectordb(self._project_id, db_id, self._apikey, resp["result"]["public_endpoint"])
+        else:
+            print(resp)
+            raise Exception("Failed to get db info")
+
 
 
 class Vectordb(Client):
-    def __init__(self, projectid: str, apikey: str, db_id: str):
-        super().__init__(projectid, apikey)
-        ## check projectid and apikey is valid or not
-        self._check()
-        ## call dispatch to get vectordb real endpoint
-        self._endpoint = "{}/api/{}/vectordb".format(self._baseurl, self._project_id)
+    def __init__(self, project_id: str, db_id: str, api_key: str, public_endpoint: str):
+        self._project_id = project_id
+        self._db_id = db_id
+        self._api_key = api_key
+        self._public_endpoint = public_endpoint
+        self._baseurl = "https://{}/api/v2/project/{}/vectordb/{}".format(self._public_endpoint, self._project_id, self._db_id)
+        self._header = {'Content-type': 'application/json', 'X-API-Key': self._api_key}
+
 
     ## insert data into table
-    def insert():
-        pass
+    def insert(self, table_name: str, records: list[dict]):
+        req_url = "{}/data/insert".format(self._baseurl)
+        req_data = {"table": table_name, "data": records}
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
+
+
     ## query data from table
-    def query():
-        pass
+    def query(self, table_name: str, query_field: str = "", query_vector: list = None, response_fields: list = None, limit: int = 1, with_distance: bool = False):
+        req_url = "{}/data/query".format(self._baseurl)
+        req_data = {
+            "table": table_name,
+            "queryField": query_field,
+            "queryVector": query_vector,
+            "response": response_fields,
+            "limit": limit,
+            "withDistance": with_distance
+        }
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
+
+
     ## delete data from table
-    def delete():
-        pass
-
-
-    # def get_all_projects(self):
-    #     pass
-
-    # def get_project(self):
-    #     project_id: str = self._project_id
-    #     #return project info
-    #     pass
-
-    # def get_all_dbs(self):
-    #     project_id: str = self._project_id
-    #     pass
-
-    # def get_db(self, db_uuid: str):
-    #     project_id: str = self._project_id
-    #     ##return db info, with public endpoint
-    #     pass
-
-    # def create_db(self, db_uuid: str):
-    #     ## invoke serverless 
-    #     pass
-
-    # def delete_db(self, db_uuid: str):
-    #     ## invoke serverless 
-    #     pass
-
-    # def load_db(self, db_uuid: str):
-    #     pass
-
-    # def unload_db(self, db_uuid: str):
-    #     pass
-
-
-    def list_tables(self):
-        pass
-
-    # def create_table(self, table_name: str = "MyTable", table_fields: list[str] = None):
-    #     ## invoke serverless with schema
-    #     pass
-
-
-    def insert(self, table_name: str = "MyTable", records: list = None):
-        requests.url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
-        pass
-
-    def delete(self, table_name: str = "MyTable", ids: list[str | int] = None):
-        pass
-
-    def query(self, table_name: str = "MyTable", query_field: str = "", query_vector: list = None, response_fields: list = None, limit: int = 1, with_distance: bool = False):
-        pass
-
-    # def drop_table(self, table_name: str = None):
-    #     ## invoke serverless with schema
-    #     pass
-
-    # def drop_db(self, db_uuid: str):
-    #     pass
+    def delete(self, table_name: str, primary_keys: list[str | int] = None):
+        req_url = "{}/data/delete".format(self._baseurl)
+        req_data = {
+            "table": table_name,
+            "primaryKeys": primary_keys
+        }
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
 
 
 
