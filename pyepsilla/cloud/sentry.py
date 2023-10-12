@@ -7,7 +7,8 @@
 import os, sys, platform, uuid, hashlib, socket, requests
 import sentry_sdk
 from sentry_sdk.integrations.atexit import AtexitIntegration
-from .version import __version__
+from pyepsilla.vectordb.version import __version__
+
 
 CONFIG_URL = "https://config.epsilla.com/candidate.json"
 SENTRY_DSN = "https://c705adb9ba9a5750ab5719c69021e3b0@o4505952171917312.ingest.sentry.io/4506031458746368"
