@@ -4,7 +4,7 @@
 # Try this simple example for epsilla cloud 
 # 1. create project and db on epsilla cloud
 # 2. create a table with schema in db
-# 3. get the api key of the project
+# 3. get the api key with project id, run this program
 
 
 from pyepsilla import cloud

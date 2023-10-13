@@ -23,8 +23,7 @@ setup(
     install_requires=[
         'requests',
         'sentry_sdk',
-        'posthog',
-        'py-machineid'
+        'posthog'
     ],
     url='https://github.com/epsilla-cloud/pyepsilla',
     project_urls={

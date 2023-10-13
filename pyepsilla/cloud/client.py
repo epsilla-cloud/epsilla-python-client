@@ -34,7 +34,7 @@ class Client(object):
         status_code = res.status_code
         body = res.json()
         return status_code, body
-    
+
 
     def vectordb(self, db_id: str):
         ## validate project_id and api_key
@@ -56,6 +56,13 @@ class Client(object):
         else:
             print(resp)
             raise Exception("Failed to get db info")
+    
+    ## TODO
+    def create_db(self, db_id: str, db_type: str, db_name: str, db_description: str = ""):
+        pass
+
+    def delete_db(self, db_id: str):
+        pass
 
 
 
@@ -67,6 +74,16 @@ class Vectordb(Client):
         self._public_endpoint = public_endpoint
         self._baseurl = "https://{}/api/v2/project/{}/vectordb/{}".format(self._public_endpoint, self._project_id, self._db_id)
         self._header = {'Content-type': 'application/json', 'X-API-Key': self._api_key}
+
+
+    ## TODO
+    ## create table
+    def create_table(self, table_name: str = "MyTable", table_fields: list[str] = None):
+        pass
+
+    ## drop table
+    def drop_table(self, table_name: str):
+        pass
 
 
     ## insert data into table

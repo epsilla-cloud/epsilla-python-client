@@ -6,6 +6,10 @@ from .field import Field, FieldType
 from .sentry import init_sentry
 from .telemetry import TelemetryManager
 
+
 init_sentry()
 
-telemetry_manager = TelemetryManager.get_singleton()
+try: 
+  telemetry_manager = TelemetryManager.get_singleton()
+except Exception:
+  pass
