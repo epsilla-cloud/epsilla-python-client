@@ -80,7 +80,7 @@ def id(winregistry: bool = True) -> str:
     if not id:
       cgroup = __read__('/proc/self/cgroup')
       if cgroup:
-        if 'docker' in cgroup:
+        if 'docker' in cgroup or 'containerd' in cgroup or 'kubepods' in cgroup:
           id = __exec__('head -1 /proc/self/cgroup | cut -d/ -f3')
     if not id:
       mountinfo = __read__('/proc/self/mountinfo')

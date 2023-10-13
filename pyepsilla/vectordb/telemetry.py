@@ -8,7 +8,7 @@ import os, socket, platform, sys
 from typing import Optional
 
 from posthog import Posthog
-import machineid
+from . import machineid
 
 POSTHOG_API_KEY = "phc_HoDjIs8hJa1dHPB6dudGwCCk5Q8t3lUaAQDWzhq9DDS"
 POSTHOG_HOST = "https://epsilla.ph.getmentioned.ai/ingest"
@@ -30,6 +30,11 @@ class TelemetryManager:
             return
 
         # We use a hashed ID to make sure telemetry data is anonymous
+        try:
+            self.machine_id = machineid.hashed_id("epsilla")
+        except Exception:
+            self.machine_id = "NA"
+
         self.machine_id = machineid.hashed_id("epsilla")
 
         self.client = Posthog(
