@@ -3,7 +3,7 @@
 import json
 import requests
 import socket
-import datetime
+import datetime, time
 
 
 class Client():
@@ -86,6 +86,7 @@ class Client():
         body = res.json()
         return status_code, body
 
+
     def insert(self, table_name: str = "MyTable", records: list = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
@@ -93,9 +94,12 @@ class Client():
             records = []
         req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         req_data = {"table": table_name, "data": records}
+        start_time = time.time()
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        end_time = time.time()
         status_code = res.status_code
         body = res.json()
+        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
 
     def delete(self, table_name: str = "MyTable", ids: list[str | int] = None):
@@ -106,9 +110,12 @@ class Client():
             raise Exception("[ERROR] Please provide primary key list to delete record(s).")
         req_url = "{}/api/{}/data/delete".format(self._baseurl, self._db)
         req_data = {"table": table_name, "primaryKeys": ids}
+        start_time = time.time()
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        end_time = time.time()
         status_code = res.status_code
         body = res.json()
+        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
 
     def rebuild(self, timeout: int = 7200):
@@ -148,9 +155,12 @@ class Client():
             "filter": filter,
             "withDistance": with_distance
         }
+        start_time = time.time()
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        end_time = time.time()
         status_code = res.status_code
         body = res.json()
+        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
 
     def get(self, table_name: str = "MyTable", response_fields: list = None):
@@ -160,9 +170,12 @@ class Client():
             response_fields = []
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
         req_data = {"table": table_name, "response": response_fields}
+        start_time = time.time()
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        end_time = time.time()
         status_code = res.status_code
         body = res.json()
+        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
 
     def drop_table(self, table_name: str = None):
