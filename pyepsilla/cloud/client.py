@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import json, datetime, socket, requests, json, pprint
+from typing import Union
 import sentry_sdk
 
 class Client(object):
@@ -120,7 +121,7 @@ class Vectordb(Client):
                 sentry_sdk.sdk("Duplicate Keys with both primary_keys and ids", "info")
             except Exception as e:
                 pass
-            print("[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!")
+            print("[WARN]Both primary_keys and ids are prvoided, will use primary keys by default!")
         if primary_keys == None and ids != None:
             primary_keys = ids
         if primary_keys == None and ids == None:
