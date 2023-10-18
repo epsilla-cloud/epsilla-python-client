@@ -3,7 +3,8 @@
 import json
 import requests
 import socket
-import datetime
+import datetime, time
+import sentry_sdk
 
 
 class Client():
@@ -86,6 +87,7 @@ class Client():
         body = res.json()
         return status_code, body
 
+
     def insert(self, table_name: str = "MyTable", records: list = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
@@ -98,18 +100,27 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def delete(self, table_name: str = "MyTable", ids: list[str | int] = None):
-        """Epsilla only supports delete records by primay keys for now."""
+    def delete(self, table_name: str = "MyTable", primary_keys: list[str|int] = None, ids: list[str | int] = None):
+        """Epsilla only supports delete records by primary keys for now."""
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
-        if ids is None:
-            raise Exception("[ERROR] Please provide primary key list to delete record(s).")
+        if primary_keys != None and ids != None:
+            try:
+                sentry_sdk.sdk("Duplicate Keys with both primary keys and ids", "info")
+            except Exception as e:
+                pass
+            print("[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!")
+        if primary_keys == None and ids != None:
+            primary_keys = ids
+        if primary_keys == None and ids == None:
+            raise Exception("[ERROR] Please provide primary keys list to delete record(s).")
         req_url = "{}/api/{}/data/delete".format(self._baseurl, self._db)
-        req_data = {"table": table_name, "primaryKeys": ids}
+        req_data = {"table": table_name, "primaryKeys": primary_keys}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
         return status_code, body
+
 
     def rebuild(self, timeout: int = 7200):
         req_url = "{}/api/rebuild".format(self._baseurl)
