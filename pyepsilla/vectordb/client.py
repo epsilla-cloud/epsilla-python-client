@@ -102,7 +102,7 @@ class Client():
         return status_code, body
 
     def delete(self, table_name: str = "MyTable", primary_keys: list[Union[str,int]] = None, ids: list[Union[str,int]] = None):
-        """Epsilla only supports delete records by primary keys for now."""
+        """Epsilla supports delete records by primary keys for now."""
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if primary_keys != None and ids != None:
