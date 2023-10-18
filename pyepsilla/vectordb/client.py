@@ -4,6 +4,7 @@ import json
 import requests
 import socket
 import datetime, time
+import sentry_sdk
 
 
 class Client():
@@ -94,29 +95,32 @@ class Client():
             records = []
         req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         req_data = {"table": table_name, "data": records}
-        start_time = time.time()
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
-        end_time = time.time()
         status_code = res.status_code
         body = res.json()
-        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
 
-    def delete(self, table_name: str = "MyTable", ids: list[str | int] = None):
-        """Epsilla only supports delete records by primay keys for now."""
+    def delete(self, table_name: str = "MyTable", primary_keys: list[str|int] = None, ids: list[str | int] = None):
+        """Epsilla only supports delete records by primary keys for now."""
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
-        if ids is None:
-            raise Exception("[ERROR] Please provide primary key list to delete record(s).")
+        if primary_keys != None and ids != None:
+            try:
+                sentry_sdk.sdk("Duplicate Keys with both primary keys and ids", "info")
+            except Exception as e:
+                pass
+            print("[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!")
+        if primary_keys == None and ids != None:
+            primary_keys = ids
+        if primary_keys == None and ids == None:
+            raise Exception("[ERROR] Please provide primary keys list to delete record(s).")
         req_url = "{}/api/{}/data/delete".format(self._baseurl, self._db)
-        req_data = {"table": table_name, "primaryKeys": ids}
-        start_time = time.time()
+        req_data = {"table": table_name, "primaryKeys": primary_keys}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
-        end_time = time.time()
         status_code = res.status_code
         body = res.json()
-        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
+
 
     def rebuild(self, timeout: int = 7200):
         req_url = "{}/api/rebuild".format(self._baseurl)
@@ -155,12 +159,9 @@ class Client():
             "filter": filter,
             "withDistance": with_distance
         }
-        start_time = time.time()
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
-        end_time = time.time()
         status_code = res.status_code
         body = res.json()
-        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
 
     def get(self, table_name: str = "MyTable", response_fields: list = None):
@@ -170,12 +171,9 @@ class Client():
             response_fields = []
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
         req_data = {"table": table_name, "response": response_fields}
-        start_time = time.time()
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
-        end_time = time.time()
         status_code = res.status_code
         body = res.json()
-        body["time_ms"] = int(round((end_time - start_time) * 1000))
         return status_code, body
 
     def drop_table(self, table_name: str = None):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import json, datetime, socket, requests, json, pprint
-
+import sentry_sdk
 
 class Client(object):
     def __init__(self, project_id: str, api_key: str):
@@ -114,6 +114,27 @@ class Vectordb(Client):
 
 
     ## delete data from table
+    def delete(self, table_name: str, primary_keys: list[str|int] = None, ids: list[str|int] = None):
+        if primary_keys != None and ids != None:
+            try:
+                sentry_sdk.sdk("Duplicate Keys with both primary_keys and ids", "info")
+            except Exception as e:
+                pass
+            print("[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!")
+        if primary_keys == None and ids != None:
+            primary_keys = ids
+        if primary_keys == None and ids == None:
+            raise Exception("[ERROR] Please provide primary keys list to delete record(s).")
+        req_url = "{}/data/delete".format(self._baseurl)
+        req_data = {
+            "table": table_name,
+            "primaryKeys": primary_keys
+        }
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
+
     def delete(self, table_name: str, primary_keys: list[str | int] = None):
         req_url = "{}/data/delete".format(self._baseurl)
         req_data = {
