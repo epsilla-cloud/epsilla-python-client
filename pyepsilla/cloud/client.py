@@ -114,7 +114,7 @@ class Vectordb(Client):
 
 
     ## delete data from table
-    def delete(self, table_name: str, primary_keys: list[str|int] = None, ids: list[str|int] = None):
+    def delete(self, table_name: str, primary_keys: list[Union[str,int]] = None, ids: list[Union[str,int]] = None):
         if primary_keys != None and ids != None:
             try:
                 sentry_sdk.sdk("Duplicate Keys with both primary_keys and ids", "info")
