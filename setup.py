@@ -2,9 +2,9 @@
 # -*- coding:utf-8 -*-
 
 from setuptools import setup, find_packages
-# import sys
-# # if sys.version_info < (3,10):
-# #     sys.exit('Sorry, Python < 3.10 is not supported')
+import sys
+if sys.version_info < (3,10):
+  print('Suggest to use Python >= 3.10')
 
 try:
   with open("./pyepsilla/vectordb/version.py") as f:
@@ -23,7 +23,6 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     platforms='any',
-    python_requires='>=3.10.0',
     install_requires=[
         'requests',
         'sentry_sdk',
