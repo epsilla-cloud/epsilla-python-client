@@ -116,6 +116,7 @@ class Vectordb(Client):
 
     ## delete data from table
     def delete(self, table_name: str, primary_keys: list[Union[str,int]] = None, ids: list[Union[str,int]] = None):
+        """Epsilla supports delete records by primary keys as default for now."""
         if primary_keys != None and ids != None:
             try:
                 sentry_sdk.sdk("Duplicate Keys with both primary_keys and ids", "info")
@@ -136,16 +137,7 @@ class Vectordb(Client):
         body = res.json()
         return status_code, body
 
-    def delete(self, table_name: str, primary_keys: list[str | int] = None):
-        req_url = "{}/data/delete".format(self._baseurl)
-        req_data = {
-            "table": table_name,
-            "primaryKeys": primary_keys
-        }
-        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
-        status_code = res.status_code
-        body = res.json()
-        return status_code, body
+
 
 
 
