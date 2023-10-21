@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 import json, datetime, socket, requests, json, pprint
-from typing import Union
+from typing import Union, Optional
 import sentry_sdk
 
 class Client(object):
@@ -137,7 +137,41 @@ class Vectordb(Client):
         body = res.json()
         return status_code, body
 
+    ## get data from table
+    def get(self, table_name: str, response_fields: Optional[list] = None, primary_keys: Optional[list[Union[str,int]]] = None, ids: Optional[list[Union[str,int]]] = None, filter: Optional[str] = None, skip: Optional[int] = None, limit: Optional[int] = None):
+        """Epsilla supports get records by primary keys as default for now."""
+        if primary_keys != None and ids != None:
+            try:
+                sentry_sdk.sdk("Duplicate Keys with both primary_keys and ids", "info")
+            except Exception as e:
+                pass
+            print("[WARN]Both primary_keys and ids are prvoided, will use primary keys by default!")
+        if primary_keys == None and ids != None:
+            primary_keys = ids
 
+        req_data = {"table": table_name}
+
+        if response_fields != None:
+            req_data["response"] = response_fields
+
+        if primary_keys != None:
+            req_data["primaryKeys"] = primary_keys
+
+        if filter != None:
+            req_data["filter"] = filter
+
+        if skip != None:
+            req_data["skip"] = skip
+
+        if limit != None:
+            req_data["limit"] = limit
+
+        req_url = "{}/data/get".format(self._baseurl)
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        status_code = res.status_code
+        body = res.json()
+        return status_code, body
+    
 
 
 
