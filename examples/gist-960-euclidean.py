@@ -36,8 +36,8 @@ fields = [id_field, vec_field]
 status_code, response = client.create_table(table_name="benchmark", table_fields=fields)
 
 ## Insert 20000 data into table
-# records_data = [ {"id": i, "vector": training_data[i].tolist()} for i in range(20000)]
-# client.insert(table_name="benchmark", records=records_data)
+records_data = [ {"id": i, "vector": training_data[i].tolist()} for i in range(10000)]
+client.insert(table_name="benchmark", records=records_data)
 
 ## Insert all data into table
 indexs = [ i for i in range(0, records_num+10000, 50000)]
@@ -53,7 +53,9 @@ for i in range(len(indexs)-1):
 
 
 ## Delete some data by ids
-client.delete(table_name="benchmark", ids=[300033, 600066])
+# client.delete(table_name="benchmark", ids=[300033, 600066])
+client.delete(table_name="benchmark", ids=[9999])
+
 
 ## Rebuild ann graph, it will wait until rebuild is finished, wait time is depended on the amount of dataset
 client.rebuild()
@@ -66,3 +68,11 @@ limit = 2
 
 status_code, response = client.query(table_name="benchmark", query_field=query_field, query_vector=query_vector, response_fields=response_fields, limit=limit, with_distance=True)
 print("Response:", response)
+
+
+## Get
+status_code, body = client.get(table_name="benchmark")
+print("Status Code:", status_code)
+print("Size of result gotten", len(body["result"]))
+
+

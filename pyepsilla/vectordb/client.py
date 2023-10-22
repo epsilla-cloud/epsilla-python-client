@@ -5,7 +5,7 @@ import requests
 import socket
 import datetime, time
 import sentry_sdk
-from typing import Union
+from typing import Union, Optional
 
 
 class Client():
@@ -60,6 +60,7 @@ class Client():
         body = res.json()
         return status_code, body
 
+
     def unload_db(self, db_name: str):
         req_url = "{}/api/{}/unload".format(self._baseurl, db_name)
         res = requests.post(url=req_url, data=None, headers=self._header)
@@ -67,7 +68,7 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def create_table(self, table_name: str = "MyTable", table_fields: list[str] = None):
+    def create_table(self, table_name: str, table_fields: list[str] = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if table_fields is None:
@@ -89,7 +90,7 @@ class Client():
         return status_code, body
 
 
-    def insert(self, table_name: str = "MyTable", records: list = None):
+    def insert(self, table_name: str, records: list = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if records is None:
@@ -101,8 +102,8 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def delete(self, table_name: str = "MyTable", primary_keys: list[Union[str,int]] = None, ids: list[Union[str,int]] = None):
-        """Epsilla supports delete records by primary keys for now."""
+    def delete(self, table_name: str, primary_keys: list[Union[str,int]] = None, ids: list[Union[str,int]] = None):
+        """Epsilla supports delete records by primary keys as default for now."""
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if primary_keys != None and ids != None:
@@ -136,7 +137,7 @@ class Client():
         return status_code, body
 
     def query(
-        self, table_name: str = "MyTable",
+        self, table_name: str,
         query_field: str = "",
         query_vector: list = None,
         response_fields: list = None,
@@ -165,17 +166,41 @@ class Client():
         body = res.json()
         return status_code, body
 
-    def get(self, table_name: str = "MyTable", response_fields: list = None):
+    def get(self, table_name: str, response_fields: Optional[list] = None, primary_keys: Optional[list[Union[str,int]]] = None, ids: Optional[list[Union[str,int]]] = None, filter: Optional[str] = None, skip: Optional[int] = None, limit: Optional[int] = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
-        if response_fields is None:
-            response_fields = []
+        if primary_keys != None and ids != None:
+            try:
+                sentry_sdk.sdk("Duplicate Keys with both primary keys and ids", "info")
+            except Exception as e:
+                pass
+            print("[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!")
+        if primary_keys == None and ids != None:
+            primary_keys = ids
+
+        req_data = {"table": table_name}
+
+        if response_fields != None:
+            req_data["response"] = response_fields
+
+        if primary_keys != None:
+            req_data["primaryKeys"] = primary_keys
+
+        if filter != None:
+            req_data["filter"] = filter
+
+        if skip != None:
+            req_data["skip"] = filter
+
+        if limit != None:
+            req_data["limit"] = filter
+
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
-        req_data = {"table": table_name, "response": response_fields}
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
         return status_code, body
+
 
     def drop_table(self, table_name: str = None):
         if self._db is None:
