@@ -115,27 +115,32 @@ class Vectordb(Client):
 
 
     ## delete data from table
-    def delete(self, table_name: str, primary_keys: list[Union[str,int]] = None, ids: list[Union[str,int]] = None):
+    def delete(self, table_name: str, primary_keys: Optional[list[Union[str,int]]] = None, ids: Optional[list[Union[str,int]]] = None, filter: Optional[str] = None):
         """Epsilla supports delete records by primary keys as default for now."""
-        if primary_keys != None and ids != None:
-            try:
-                sentry_sdk.sdk("Duplicate Keys with both primary_keys and ids", "info")
-            except Exception as e:
-                pass
-            print("[WARN]Both primary_keys and ids are prvoided, will use primary keys by default!")
+        if filter == None:
+            if primary_keys == None and ids == None:
+                raise Exception("[ERROR] Please provide at least one of primary keys(ids) and filter to delete record(s).")
         if primary_keys == None and ids != None:
             primary_keys = ids
-        if primary_keys == None and ids == None:
-            raise Exception("[ERROR] Please provide primary keys list to delete record(s).")
+        if primary_keys != None and ids != None:
+            try:
+                sentry_sdk.sdk("Duplicate Keys with both primary keys and ids", "info")
+            except Exception as e:
+                pass
+            print("[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!")
+
         req_url = "{}/data/delete".format(self._baseurl)
-        req_data = {
-            "table": table_name,
-            "primaryKeys": primary_keys
-        }
+        req_data = { "table": table_name }
+        if primary_keys != None:
+            req_data["primaryKeys"] = primary_keys
+        if filter != None:
+            req_data["filter"] = filter
+
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
         return status_code, body
+
 
     ## get data from table
     def get(self, table_name: str, response_fields: Optional[list] = None, primary_keys: Optional[list[Union[str,int]]] = None, ids: Optional[list[Union[str,int]]] = None, filter: Optional[str] = None, skip: Optional[int] = None, limit: Optional[int] = None):
