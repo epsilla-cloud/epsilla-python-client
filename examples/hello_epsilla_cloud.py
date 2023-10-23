@@ -44,9 +44,7 @@ print(response)
 
 
 # Delete specific records from table
-status_code, response = db.delete(
-  table_name="MyTable", 
-  primary_keys=[4, 5]
-)
+status_code, response = db.delete(table_name="MyTable", primary_keys=[4, 5])
+status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
 print(response)
 
