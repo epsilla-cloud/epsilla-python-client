@@ -24,7 +24,7 @@ client.use_db(db_name="MyDB")
 status_code, response = client.create_table(
   table_name="MyTable",
   table_fields=[
-    {"name": "ID", "dataType": "INT"},
+    {"name": "ID", "dataType": "INT", "primaryKey": True},
     {"name": "Doc", "dataType": "STRING"},
     {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": 4}
   ]
@@ -66,10 +66,18 @@ status_code, response = client.query(
 )
 print(response)
 
-# Drop table
-status_code, response = client.drop_table("MyTable")
+
+# status_code, response =  client.delete(table_name="MyTable", ids=[3])
+status_code, response =  client.delete(table_name="MyTable", primary_keys=[3, 4])
+# status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
 print(response)
 
+
+
+# Drop table
+# status_code, response = client.drop_table("MyTable")
+# print(response)
+
 # Unload db
-status_code, response = client.unload_db("MyDB")
-print(response)
+# status_code, response = client.unload_db("MyDB")
+# print(response)
