@@ -18,14 +18,17 @@ jobs:
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.1
       with:
-        github_token: ${{ secrets.PAT_TOKEN }}    
+        github_token: ${{ secrets.PAT_TOKEN }}
+        tag_prefix: "" 
+        dry_run: true
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        echo "new tag: " ${{ steps.tag_version.outputs.new_tag }}
+        echo "new tag: " ${{ steps.tag_version.outputs.new_tag }} ","  ${{ steps.tag_version.outputs.new_version }}
+        #v0.1.21-dev.0
         pip install -r requirements.txt
         python -m pip install --upgrade pip twine build
         python -m build --sdist --wheel --outdir dist/ .
