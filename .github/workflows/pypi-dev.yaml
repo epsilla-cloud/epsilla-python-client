@@ -27,7 +27,7 @@ jobs:
       with:
         github_token: ${{ secrets.PAT_TOKEN }}
         tag_prefix: "" 
-        dry_run: true
+        dry_run: false
 
     - name: Set up Python
       uses: actions/setup-python@v3
@@ -37,14 +37,13 @@ jobs:
     - name: Install dependencies
       run: |
         echo "new tag: " ${{ steps.tag_version.outputs.new_tag }} ","  ${{ steps.tag_version.outputs.new_version }}
-        #v0.1.21-dev.0
         pip install -r requirements.txt
         python -m pip install --upgrade pip twine build
         python -m build --sdist --wheel --outdir dist/ .
 
-    - name: Create a GitHub release
-      uses: ncipollo/release-action@v1
-      with:
-        tag: ${{ steps.tag_version.outputs.new_tag }}
-        name: Release ${{ steps.tag_version.outputs.new_tag }}
-        body: ${{ steps.tag_version.outputs.changelog }}
+    # - name: Create a GitHub release
+    #   uses: ncipollo/release-action@v1
+    #   with:
+    #     tag: ${{ steps.tag_version.outputs.new_tag }}
+    #     name: Release ${{ steps.tag_version.outputs.new_tag }}
+    #     body: ${{ steps.tag_version.outputs.changelog }}
