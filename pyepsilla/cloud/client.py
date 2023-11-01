@@ -96,6 +96,7 @@ class Vectordb(Client):
         body = res.json()
         return status_code, body
 
+
     ## query data from table
     def query(self, table_name: str, query_field: str = None, query_vector: list = None, response_fields: Optional[list] = None, limit: int = 2, filter: Optional[str] = None, with_distance: Optional[bool] = False):
         req_url = "{}/data/query".format(self._baseurl)
@@ -160,19 +161,14 @@ class Vectordb(Client):
             primary_keys = ids
 
         req_data = {"table": table_name}
-
         if response_fields != None:
             req_data["response"] = response_fields
-
         if primary_keys != None:
             req_data["primaryKeys"] = primary_keys
-
         if filter != None:
             req_data["filter"] = filter
-
         if skip != None:
             req_data["skip"] = skip
-
         if limit != None:
             req_data["limit"] = limit
 
