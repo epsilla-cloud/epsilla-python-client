@@ -10,11 +10,14 @@
 from pyepsilla import vectordb
 
 # Connect to Epsilla VectorDB
-client = vectordb.Client(host='127.0.0.1', port='8888')
+client = vectordb.Client(protocol='http',  host='127.0.0.1',        port='8888')
+
+# You can also use Epsilla Cloud
+# client = vectordb.Client(protocol='https', host='demo.epsilla.com', port='443')
 
 # Load DB with path
 ## pay attention to change db_path to persistent volume for production environment
-status_code, response = client.load_db(db_name="MyDB", db_path="/tmp/epsilla")
+status_code, response = client.load_db(db_name="MyDB", db_path="/data/epsilla_demo")
 print(response)
 
 # Set DB to current DB

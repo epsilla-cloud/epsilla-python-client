@@ -14,13 +14,13 @@ pip3 install --upgrade pyepsilla
 
 ## Documentation
 
-### Run epsilla vectordb on localhost
+### 1.1 Run epsilla vectordb on localhost
 ```shell
 docker pull epsilla/vectordb
 docker run -d -p 8888:8888 epsilla/vectordb
 ```
 
-### Use pyepsilla to connect to and interact with vector database
+### 1.2 Use pyepsilla to connect to and interact with local vector database
 
 ```python
 from pyepsilla import vectordb
@@ -67,7 +67,7 @@ status_code, response = client.query(
 )
 print(response)
 
-# search without specific response field, then it will return all fields
+## search without specific response field, then it will return all fields
 status_code, response = client.query(
   table_name="MyTable",
   query_field="Embedding",
@@ -77,12 +77,40 @@ status_code, response = client.query(
 print(response)
 
 
+
+## delete records by primary_keys (and filter)
+# status_code, response =  client.delete(table_name="MyTable", ids=[3])
+status_code, response =  client.delete(table_name="MyTable", primary_keys=[3, 4])
+# status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
+print(response)
+
+
 ## drop a table
 #client.drop_table("MyTable")
 
 ## unload a database from memory
 #client.unload_db("MyDB")
 ```
+
+
+
+### 2 Run epsilla vectordb on epsilla cloud
+
+```python3
+
+from pyepsilla import cloud
+
+# Connect to Epsilla Cloud
+client = cloud.Client(project_id="32ef3a3f-****-****-****-************", api_key="epsilla*****")
+
+# Connect to Vectordb
+db = client.vectordb(db_id="df7431d0-****-****-****-************")
+
+```
+Please check https://github.com/epsilla-cloud/epsilla-python-client/blob/main/examples/hello_epsilla_cloud.py for detail.
+
+
+
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/epsilla-cloud/epsilla-python-client/

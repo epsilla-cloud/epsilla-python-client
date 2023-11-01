@@ -98,16 +98,22 @@ class Vectordb(Client):
 
 
     ## query data from table
-    def query(self, table_name: str, query_field: str = "", query_vector: list = None, response_fields: list = None, limit: int = 1, with_distance: bool = False):
+    def query(self, table_name: str, query_field: str = None, query_vector: list = None, response_fields: Optional[list] = None, limit: int = 2, filter: Optional[str] = None, with_distance: Optional[bool] = False):
         req_url = "{}/data/query".format(self._baseurl)
-        req_data = {
-            "table": table_name,
-            "queryField": query_field,
-            "queryVector": query_vector,
-            "response": response_fields,
-            "limit": limit,
-            "withDistance": with_distance
-        }
+        req_data = { "table": table_name }
+        if query_field != None:
+            req_data["queryField"] = query_field
+        if query_vector != None:
+            req_data["queryVector"] = query_vector
+        if response_fields != None:
+            req_data["response"] = response_fields
+        if limit != None:
+            req_data["limit"] = limit
+        if filter != None:
+            req_data["filter"] = filter
+        if with_distance != None:
+            req_data["withDistance"] = with_distance
+
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
@@ -155,19 +161,14 @@ class Vectordb(Client):
             primary_keys = ids
 
         req_data = {"table": table_name}
-
         if response_fields != None:
             req_data["response"] = response_fields
-
         if primary_keys != None:
             req_data["primaryKeys"] = primary_keys
-
         if filter != None:
             req_data["filter"] = filter
-
         if skip != None:
             req_data["skip"] = skip
-
         if limit != None:
             req_data["limit"] = limit
 
