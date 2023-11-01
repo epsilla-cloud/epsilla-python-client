@@ -35,6 +35,7 @@ class Client():
         res = requests.get(url=req_url, data=json.dumps(req_data), headers=self._header, timeout=self._timeout)
         status_code = res.status_code
         body = res.text
+        res.close()
         return status_code, body
 
     def state(self):
@@ -43,6 +44,7 @@ class Client():
         res = requests.get(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
     def use_db(self, db_name: str):
@@ -58,6 +60,7 @@ class Client():
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -66,6 +69,7 @@ class Client():
         res = requests.post(url=req_url, data=None, headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
     def create_table(self, table_name: str, table_fields: list[str] = None):
@@ -78,6 +82,7 @@ class Client():
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
     def list_tables(self):
@@ -87,6 +92,7 @@ class Client():
         res = requests.get(url=req_url, headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -100,6 +106,7 @@ class Client():
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
     def delete(self, table_name: str, primary_keys: list[Union[str,int]] = None, ids: list[Union[str,int]] = None, filter: Optional[str] = None):
@@ -128,6 +135,7 @@ class Client():
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -141,6 +149,7 @@ class Client():
         print("[INFO] Start Time:{}\n       End   Time:{}".format(start_time, end_time))
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
     def query(
@@ -171,6 +180,7 @@ class Client():
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
     def get(self, table_name: str, response_fields: Optional[list] = None, primary_keys: Optional[list[Union[str,int]]] = None, ids: Optional[list[Union[str,int]]] = None, filter: Optional[str] = None, skip: Optional[int] = None, limit: Optional[int] = None):
@@ -206,6 +216,7 @@ class Client():
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -217,6 +228,7 @@ class Client():
         res = requests.delete(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
     def drop_db(self, db_name: str):
@@ -224,4 +236,5 @@ class Client():
         res = requests.delete(url=req_url, data=None, headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body

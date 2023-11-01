@@ -15,7 +15,9 @@ class Client(object):
 
     def validate(self):
         res = requests.get(url=self._baseurl, data=None, headers=self._header)
-        return res.json()
+        data = res.json()
+        res.close()
+        return data
 
 
     def get_db_list(self):
@@ -26,6 +28,7 @@ class Client(object):
         body = res.json()
         if status_code == 200 and body["statusCode"] == 200:
             db_list = [ db_id for db_id in res.json()["result"] ]
+        res.close()
         return db_list
 
 
@@ -34,6 +37,7 @@ class Client(object):
         res = requests.get(url=req_url, data=None, headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -94,6 +98,7 @@ class Vectordb(Client):
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -117,6 +122,7 @@ class Vectordb(Client):
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -145,6 +151,7 @@ class Vectordb(Client):
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
 
 
@@ -176,6 +183,7 @@ class Vectordb(Client):
         res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
         status_code = res.status_code
         body = res.json()
+        res.close()
         return status_code, body
     
 
