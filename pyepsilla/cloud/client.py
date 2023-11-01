@@ -3,6 +3,7 @@
 import json, datetime, socket, requests, json, pprint
 from typing import Union, Optional
 import sentry_sdk
+requests.packages.urllib3.disable_warnings()
 
 class Client(object):
     def __init__(self, project_id: str, api_key: str):
@@ -10,11 +11,11 @@ class Client(object):
         self._apikey = api_key
         self._baseurl = "https://dispatch.epsilla.com/api/v2/project/{}".format(self._project_id)
         self._timeout = 10
-        self._header = {'Content-type': 'application/json', 'X-API-Key': api_key}
+        self._header = {'Content-type': 'application/json', "Connection": "close", 'X-API-Key': api_key}
 
 
     def validate(self):
-        res = requests.get(url=self._baseurl, data=None, headers=self._header)
+        res = requests.get(url=self._baseurl, data=None, headers=self._header, verify=False)
         data = res.json()
         res.close()
         return data
@@ -23,7 +24,7 @@ class Client(object):
     def get_db_list(self):
         db_list = []
         req_url = "{}/vectordb/list".format(self._baseurl)
-        res = requests.get(url=req_url, data=None, headers=self._header)
+        res = requests.get(url=req_url, data=None, headers=self._header, verify=False)
         status_code = res.status_code
         body = res.json()
         if status_code == 200 and body["statusCode"] == 200:
@@ -34,7 +35,7 @@ class Client(object):
 
     def get_db_info(self, db_id: str):
         req_url = "{}/vectordb/{}".format(self._baseurl, db_id)
-        res = requests.get(url=req_url, data=None, headers=self._header)
+        res = requests.get(url=req_url, data=None, headers=self._header, verify=False)
         status_code = res.status_code
         body = res.json()
         res.close()
@@ -95,7 +96,7 @@ class Vectordb(Client):
     def insert(self, table_name: str, records: list[dict]):
         req_url = "{}/data/insert".format(self._baseurl)
         req_data = {"table": table_name, "data": records}
-        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header, verify=False)
         status_code = res.status_code
         body = res.json()
         res.close()
@@ -119,7 +120,7 @@ class Vectordb(Client):
         if with_distance != None:
             req_data["withDistance"] = with_distance
 
-        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header, verify=False)
         status_code = res.status_code
         body = res.json()
         res.close()
@@ -148,7 +149,7 @@ class Vectordb(Client):
         if filter != None:
             req_data["filter"] = filter
 
-        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header, verify=False)
         status_code = res.status_code
         body = res.json()
         res.close()
@@ -180,7 +181,7 @@ class Vectordb(Client):
             req_data["limit"] = limit
 
         req_url = "{}/data/get".format(self._baseurl)
-        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header)
+        res = requests.post(url=req_url, data=json.dumps(req_data), headers=self._header, verify=False)
         status_code = res.status_code
         body = res.json()
         res.close()
