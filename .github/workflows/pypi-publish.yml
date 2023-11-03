@@ -20,6 +20,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Bump version and push tag
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.1
+      with:
+        github_token: ${{ secrets.PAT_TOKEN }}
+        tag_prefix: "" 
+        dry_run: false    
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
