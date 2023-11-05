@@ -3,3 +3,4 @@
 
 from . import vectordb
 from . import cloud
+from . import enterprise
