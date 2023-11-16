@@ -1,1 +1,1 @@
-Python Client for Epsilla Cloud Enterprise
+Python Client for Epsilla Enterprise
