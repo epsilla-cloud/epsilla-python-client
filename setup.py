@@ -14,6 +14,7 @@ setup(
     version=open("./pyepsilla/vectordb/version.py").read().split('"')[-2],
     keywords="epsilla",
     author="Epsilla Team",
+    author_email="info@epsilla.com",
     description="Epsilla Python SDK",
     long_description="Epsilla Python SDK",
     license="Apache License",
