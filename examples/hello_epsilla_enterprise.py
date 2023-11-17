@@ -45,9 +45,6 @@ status_code, response = db.create_table(
 )
 print(status_code, response)
 
-# List tables
-status_code, response = db.list_tables()
-print(status_code, response)
 
 # Insert new vector records into table
 status_code, response = db.insert(
@@ -71,12 +68,22 @@ status_code, response = db.query(
     limit=2,
 )
 print(status_code, response)
+
 # Query Vectors without specific response field, then it will return all fields
 status_code, response = db.query(
     table_name="MyTable",
     query_field="Embedding",
     query_vector=[0.35, 0.55, 0.47, 0.94],
     limit=2,
+)
+print(status_code, response)
+
+# Get
+status_code, response = db.get(
+    table_name="MyTable",
+    response_fields=["Doc", "Embedding"],
+    filter="Doc <> 'San Francisco'",
+    limit=5,
 )
 print(status_code, response)
 
