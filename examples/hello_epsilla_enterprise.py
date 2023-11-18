@@ -19,7 +19,14 @@ table_name = "HelloEpsilla"
 
 
 # Create a new db
-status_code, response = client.create_db(db_name, db_id)
+status_code, response = client.create_db(
+    db_name,
+    db_id,
+    min_replicas = 2,
+    max_replicas = 2,
+    sharding_init_number = 3,
+    sharding_capacity = 1000000,
+)
 print(status_code, response)
 
 # Get info of db
