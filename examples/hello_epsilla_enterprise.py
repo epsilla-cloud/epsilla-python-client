@@ -31,7 +31,7 @@ time.sleep(5)
 status_code, response = client.load_db(db_id)
 print(status_code, response)
 
-# Connect to an exsiting db
+# Connect to an existing db
 db = client.vectordb(db_id)
 
 # Create table with schema
