@@ -77,9 +77,25 @@ class Client(cloud.Client):
         db_name: str = Field(pattern=r"^[a-zA-Z-0-9]{4,32}$", strict=True),
         db_id: Optional[str] = None,
         project_id: Optional[str] = "default",
+        min_replicas: Optional[int] = 0,
+        max_replicas: Optional[int] = 1,
+        sharding_init_number: Optional[int] = 1,
+        sharding_increase_step: Optional[int] = 2,
+        sharding_capacity: Optional[int] = 150000,
+        sharding_increase_threshold: Optional[float] = 0.9,
     ):
         req_url = "{}/vectordb/create".format(self._baseurl)
-        req_data = {"db_name": db_name, "db_uuid": db_id, "project_id": project_id}
+        req_data = {
+            "db_name": db_name,
+            "db_uuid": db_id,
+            "project_id": project_id,
+            "min_replicas": min_replicas,
+            "max_replicas": max_replicas,
+            "sharding_init_number": sharding_init_number,
+            "sharding_increase_step": sharding_increase_step,
+            "sharding_capacity": sharding_capacity,
+            "sharding_increase_threshold": sharding_increase_threshold,
+        }
         resp = requests.post(
             url=req_url,
             data=json.dumps(req_data),
