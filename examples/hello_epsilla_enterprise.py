@@ -5,7 +5,7 @@ import time
 
 from pyepsilla import enterprise
 
-# Connect to Epsilla Entreprise API EndPoint
+# Connect to Epsilla Enterprise API EndPoint
 client = enterprise.Client(base_url="https://api.epsilla.com")
 client.hello()
 
