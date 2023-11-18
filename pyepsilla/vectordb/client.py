@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 import json, requests, socket, datetime, time, sentry_sdk
 from typing import Union, Optional
-requests.packages.urllib3.disable_warnings()
-
+from requests.packages.urllib3.exceptions import InsecureRequestWarning 
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class Client():
     def __init__(self, protocol: str = 'http', host: str = 'localhost', port: str = '8888'):
