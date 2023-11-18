@@ -15,8 +15,6 @@ client.hello()
 
 db_name = "helloepsilla"
 db_id = "helloepsilla-1234567890"
-table_name = "HelloEpsilla"
-
 
 # Create a new db
 status_code, response = client.create_db(
