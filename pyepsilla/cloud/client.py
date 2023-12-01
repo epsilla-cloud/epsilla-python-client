@@ -104,7 +104,7 @@ class Vectordb(Client):
 
 
     ## query data from table
-    def query(self, table_name: str, query_field: str = None, query_vector: list = None, response_fields: Optional[list] = None, limit: int = 2, filter: Optional[str] = None, with_distance: Optional[bool] = False):
+    def query(self, table_name: str, query_field: str = None, query_vector: Union[list,dict] = None, response_fields: Optional[list] = None, limit: int = 2, filter: Optional[str] = None, with_distance: Optional[bool] = False):
         req_url = "{}/data/query".format(self._baseurl)
         req_data = { "table": table_name }
         if query_field != None:
