@@ -221,7 +221,7 @@ class Vectordb(object):
         self,
         table_name: str,
         query_field: str = None,
-        query_vector: list = None,
+        query_vector: Union[list,dict] = None,
         response_fields: Optional[list] = None,
         limit: int = 2,
         filter: Optional[str] = None,
