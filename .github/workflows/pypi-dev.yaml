@@ -30,6 +30,7 @@ jobs:
       uses: mathieudutour/github-tag-action@v6.1
       with:
         github_token: ${{ secrets.PAT_TOKEN }}
+        tag_prefix: ""
         custom_tag: ${{ steps.version.outputs.version }}
         dry_run: false
 
