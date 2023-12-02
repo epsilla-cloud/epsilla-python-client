@@ -41,7 +41,7 @@ jobs:
   
     - name: Install dependencies
       run: |
-        echo "new tag: ${{ steps.tag_version.outputs.new_tag }}  ,${{ steps.tag_version.outputs.new_version }} "
+        echo "!!!new tag: ${{ steps.tag_version.outputs.new_tag }}  ,${{ steps.tag_version.outputs.new_version }} "
         pip install -r requirements.txt
         python -m pip install --upgrade pip twine build
         python -m build --sdist --wheel --outdir dist/ .
