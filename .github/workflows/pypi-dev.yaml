@@ -32,7 +32,7 @@ jobs:
         github_token: ${{ secrets.PAT_TOKEN }}
         tag_prefix: ""
         custom_tag: ${{ steps.version.outputs.version }}
-        dry_run: false
+        dry_run: true
 
     - name: Set up Python
       uses: actions/setup-python@v3
