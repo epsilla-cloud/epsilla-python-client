@@ -152,7 +152,7 @@ class Client():
     def query(
         self, table_name: str,
         query_field: str = "",
-        query_vector: list = None,
+        query_vector: Union[list,dict] = None,
         response_fields: list = None,
         limit: int = 1,
         filter: str = "",

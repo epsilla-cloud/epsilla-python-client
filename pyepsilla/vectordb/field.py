@@ -27,6 +27,9 @@ class FieldType(IntEnum):
     DOUBLE = 11
     STRING = 20
     BOOL = 30
+    JSON = 31
     VECTOR_FLOAT = 40
     VECTOR_DOUBLE = 41
+    SPARSE_VECTOR_FLOAT = 50
+    SPARSE_VECTOR_DOUBLE = 51
     UNKNOWN = 999
