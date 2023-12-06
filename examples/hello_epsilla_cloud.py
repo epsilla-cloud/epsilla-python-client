@@ -6,19 +6,30 @@
 # 2. create a table with schema in db
 # 3. get the api key with project id, run this program
 
+import sys
 
 from pyepsilla import cloud
 
 # Connect to Epsilla Cloud
 client = cloud.Client(
-    project_id="32ef3a3f-fcb0-4c4b-98bb-fca01bca0d0a", api_key="epsilla"
+    project_id="7a68814c-f839-4a67-9ec6-93c027c865e6",
+    api_key="epsilla-cloud-api-key",
 )
 
 # Connect to Vectordb
-db = client.vectordb(db_id="df7431d0-806b-4654-8b45-4bdb20038e26")
+db = client.vectordb(db_id="6accafb1-476d-43b0-aa64-12ebfbf7442d")
 
 
-# Create a table with schema on Epsilla Cloud Console
+# Create a table with schema
+status_code, response = db.create_table(
+    table_name="MyTable",
+    table_fields=[
+        {"name": "ID", "dataType": "INT", "primaryKey": True},
+        {"name": "Doc", "dataType": "STRING"},
+        {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": 4},
+    ],
+)
+print(status_code, response)
 
 
 # Insert new vector records into table
@@ -48,4 +59,8 @@ print(status_code, response)
 # Delete specific records from table
 status_code, response = db.delete(table_name="MyTable", primary_keys=[4, 5])
 status_code, response = db.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
+print(status_code, response)
+
+# Drop table
+status_code, response = db.drop_table(table_name="MyTable")
 print(status_code, response)
