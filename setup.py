@@ -21,7 +21,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     platforms="any",
-    install_requires=["requests", "sentry_sdk", "posthog"],
+    install_requires=["requests", "sentry_sdk", "posthog", "pydantic"],
     url="https://github.com/epsilla-cloud/epsilla-python-client",
     project_urls={
         "Source": "https://github.com/epsilla-cloud/epsilla-python-client",
