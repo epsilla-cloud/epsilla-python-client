@@ -113,7 +113,7 @@ class Vectordb(Client):
         if table_fields is None:
             table_fields = []
         req_url = "{}/table/create".format(self._baseurl)
-        req_data = {"table_name": table_name, "fields": table_fields}
+        req_data = {"name": table_name, "fields": table_fields}
         res = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
