@@ -140,8 +140,6 @@ class Vectordb(Client):
     def insert(self, table_name: str, records: list[dict]):
         req_url = "{}/data/insert".format(self._baseurl)
         req_data = {"table": table_name, "data": records}
-        print("req_url: ", req_url)
-        print("req_data: ", req_data)
         res = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
