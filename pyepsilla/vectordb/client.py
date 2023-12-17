@@ -17,7 +17,7 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class Client:
     def __init__(
-        self, protocol: str = "http", host: str = "localhost", port: str = "8888"
+        self, protocol: str = "http", host: str = "localhost", port: str = "8888", headers: dict = None
     ):
         self._protocol = protocol
         self._host = host
@@ -26,6 +26,8 @@ class Client:
         self._db = None
         self._timeout = 10
         self._header = {"Content-type": "application/json", "Connection": "close"}
+        if headers is not None:
+            self._header.update(headers)
         self.check_networking()
 
     def check_networking(self):
@@ -100,13 +102,15 @@ class Client:
         res.close()
         return status_code, body
 
-    def create_table(self, table_name: str, table_fields: list[str] = None):
+    def create_table(self, table_name: str, table_fields: list[dict] = None, indices: list[dict] = None):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if table_fields is None:
             table_fields = []
         req_url = "{}/api/{}/schema/tables".format(self._baseurl, self._db)
         req_data = {"name": table_name, "fields": table_fields}
+        if indices is not None:
+            req_data["indices"] = indices
         res = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
@@ -203,29 +207,35 @@ class Client:
     def query(
         self,
         table_name: str,
-        query_field: str = "",
+        query_text: str = None,
+        query_index: str = None,
+        query_field: str = None,
         query_vector: Union[list, dict] = None,
         response_fields: list = None,
-        limit: int = 1,
+        limit: int = 2,
         filter: str = "",
         with_distance: bool = False,
     ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
-        if query_vector is None:
-            query_vector = []
         if response_fields is None:
             response_fields = []
         req_url = "{}/api/{}/data/query".format(self._baseurl, self._db)
         req_data = {
             "table": table_name,
-            "queryField": query_field,
-            "queryVector": query_vector,
             "response": response_fields,
             "limit": limit,
             "filter": filter,
             "withDistance": with_distance,
         }
+        if query_text is not None:
+            req_data["query"] = query_text
+        if query_index is not None:
+            req_data["queryIndex"] = query_index
+        if query_field is not None:
+            req_data["queryField"] = query_field
+        if query_vector is not None:
+            req_data["queryVector"] = query_vector
         res = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
