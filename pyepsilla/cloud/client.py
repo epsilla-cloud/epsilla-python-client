@@ -16,7 +16,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 class Client(object):
-    def __init__(self, project_id: str, api_key: str):
+    def __init__(self, project_id: str, api_key: str, headers: dict = None):
         self._project_id = project_id
         self._apikey = api_key
         self._baseurl = "https://dispatch.epsilla.com/api/v3/project/{}".format(
@@ -28,6 +28,8 @@ class Client(object):
             "Connection": "close",
             "X-API-Key": api_key,
         }
+        if headers is not None:
+            self._header.update(headers)
 
     def validate(self):
         res = requests.get(
@@ -85,7 +87,7 @@ class Client(object):
 
 
 class Vectordb(Client):
-    def __init__(self, project_id: str, db_id: str, api_key: str, public_endpoint: str):
+    def __init__(self, project_id: str, db_id: str, api_key: str, public_endpoint: str, headers: dict = None):
         self._project_id = project_id
         self._db_id = db_id
         self._api_key = api_key
@@ -94,6 +96,8 @@ class Vectordb(Client):
             self._public_endpoint, self._project_id, self._db_id
         )
         self._header = {"Content-type": "application/json", "X-API-Key": self._api_key}
+        if headers is not None:
+            self._header.update(headers)
 
     # List table
     def list_tables(self):
@@ -107,13 +111,15 @@ class Vectordb(Client):
         return status_code, body
 
     # Create table
-    def create_table(self, table_name: str, table_fields: list[str] = None):
+    def create_table(self, table_name: str, table_fields: list[dict] = None, indices: list[dict] = None):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
         if table_fields is None:
             table_fields = []
         req_url = "{}/table/create".format(self._baseurl)
         req_data = {"name": table_name, "fields": table_fields}
+        if indices is not None:
+            req_data["indices"] = indices
         res = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
@@ -152,6 +158,8 @@ class Vectordb(Client):
     def query(
         self,
         table_name: str,
+        query_text: str = None,
+        query_index: str = None,
         query_field: str = None,
         query_vector: Union[list, dict] = None,
         response_fields: Optional[list] = None,
@@ -161,6 +169,10 @@ class Vectordb(Client):
     ):
         req_url = "{}/data/query".format(self._baseurl)
         req_data = {"table": table_name}
+        if query_text is not None:
+            req_data["query"] = query_text
+        if query_index is not None:
+            req_data["queryIndex"] = query_index
         if query_field != None:
             req_data["queryField"] = query_field
         if query_vector != None:
