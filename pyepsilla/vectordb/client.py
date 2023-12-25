@@ -17,7 +17,11 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 class Client:
     def __init__(
-        self, protocol: str = "http", host: str = "localhost", port: str = "8888", headers: dict = None
+        self,
+        protocol: str = "http",
+        host: str = "localhost",
+        port: str = "8888",
+        headers: dict = None,
     ):
         self._protocol = protocol
         self._host = host
@@ -102,7 +106,12 @@ class Client:
         res.close()
         return status_code, body
 
-    def create_table(self, table_name: str, table_fields: list[dict] = None, indices: list[dict] = None):
+    def create_table(
+        self,
+        table_name: str,
+        table_fields: list[dict] = None,
+        indices: list[dict] = None,
+    ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         if table_fields is None:
@@ -286,6 +295,19 @@ class Client:
 
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
         res = requests.post(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+        )
+        status_code = res.status_code
+        body = res.json()
+        res.close()
+        return status_code, body
+
+    def statistics(self):
+        if self._db is None:
+            raise Exception("[ERROR] Please use_db() first!")
+        req_url = "{}/api/{}/statistics".format(self._baseurl, self._db)
+        req_data = None
+        res = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
         status_code = res.status_code

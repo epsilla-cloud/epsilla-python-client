@@ -73,6 +73,11 @@ print(response)
 status_code, response = client.get(table_name="MyTable", limit=2)
 print(response)
 
+# Get Statistics
+status_code, response = client.statistics()
+print(response)
+
+# Delete Vectors
 # status_code, response =  client.delete(table_name="MyTable", ids=[3])
 status_code, response = client.delete(table_name="MyTable", primary_keys=[3, 4])
 # status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
