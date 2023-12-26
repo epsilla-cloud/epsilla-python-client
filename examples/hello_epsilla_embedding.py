@@ -29,8 +29,10 @@ status_code, response = client.create_table(
     table_fields=[
         {"name": "ID", "dataType": "INT", "primaryKey": True},
         {"name": "Doc", "dataType": "STRING"},
-        {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": 4},
     ],
+    indices=[
+      {"name": "Index", "field": "Doc"},
+    ]
 )
 print(response)
 
@@ -42,11 +44,16 @@ print(response)
 status_code, response = client.insert(
     table_name="MyTable",
     records=[
-        {"ID": 1, "Doc": "Berlin", "Embedding": [0.05, 0.61, 0.76, 0.74]},
-        {"ID": 2, "Doc": "London", "Embedding": [0.19, 0.81, 0.75, 0.11]},
-        {"ID": 3, "Doc": "Moscow", "Embedding": [0.36, 0.55, 0.47, 0.94]},
-        {"ID": 4, "Doc": "San Francisco", "Embedding": [0.18, 0.01, 0.85, 0.80]},
-        {"ID": 5, "Doc": "Shanghai", "Embedding": [0.24, 0.18, 0.22, 0.44]},
+        {"ID": 1, "Doc": "The garden was blooming with vibrant flowers, attracting butterflies and bees with their sweet nectar."},
+        {"ID": 2, "Doc": "In the busy city streets, people rushed to and fro, hardly noticing the beauty of the day."},
+        {"ID": 3, "Doc": "The library was a quiet haven, filled with the scent of old books and the soft rustling of pages."},
+        {"ID": 4, "Doc": "High in the mountains, the air was crisp and clear, revealing breathtaking views of the valley below."},
+        {"ID": 5, "Doc": "At the beach, children played joyfully in the sand, building castles and chasing the waves."},
+        {"ID": 6, "Doc": "Deep in the forest, a deer cautiously stepped out, its ears alert for any signs of danger."},
+        {"ID": 7, "Doc": "The old town's historical architecture spoke volumes about its rich cultural past."},
+        {"ID": 8, "Doc": "Night fell, and the sky was a canvas of stars, shining brightly in the moon's soft glow."},
+        {"ID": 9, "Doc": "A cozy cafe on the corner served the best hot chocolate, warming the hands and hearts of its visitors."},
+        {"ID": 10, "Doc": "The artist's studio was cluttered but inspiring, filled with unfinished canvases and vibrant paints."},
     ],
 )
 print(response)
@@ -54,18 +61,17 @@ print(response)
 # Query Vectors with specific response field
 status_code, response = client.query(
     table_name="MyTable",
-    query_field="Embedding",
-    query_vector=[0.35, 0.55, 0.47, 0.94],
+    query_text="Where can I find a serene environment, ideal for relaxation and introspection?",
     response_fields=["Doc"],
-    limit=2,
+    with_distance=True,
+    limit=3
 )
+print(response)
 
 # Query Vectors without specific response field, then it will return all fields
 status_code, response = client.query(
     table_name="MyTable",
-    query_field="Embedding",
-    query_vector=[0.35, 0.55, 0.47, 0.94],
-    limit=2,
+    query_text="Where can I find a serene environment, ideal for relaxation and introspection?",
 )
 print(response)
 
@@ -73,21 +79,16 @@ print(response)
 status_code, response = client.get(table_name="MyTable", limit=2)
 print(response)
 
-# Get Statistics
-status_code, response = client.statistics()
-print(response)
-
-# Delete Vectors
 # status_code, response =  client.delete(table_name="MyTable", ids=[3])
-status_code, response = client.delete(table_name="MyTable", primary_keys=[3, 4])
+status_code, response = client.delete(table_name="MyTable", primary_keys=[1, 3, 4])
 # status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
 print(response)
 
 
 # Drop table
-# status_code, response = client.drop_table("MyTable")
-# print(response)
+status_code, response = client.drop_table("MyTable")
+print(response)
 
 # Unload db
-# status_code, response = client.unload_db("MyDB")
-# print(response)
+status_code, response = client.unload_db("MyDB")
+print(response)

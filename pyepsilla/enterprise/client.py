@@ -25,7 +25,7 @@ class DbModel(BaseModel):
 
 
 class Client(cloud.Client):
-    def __init__(self, base_url: str, project_id: Optional[str] = "default"):
+    def __init__(self, base_url: str, project_id: Optional[str] = "default", headers: dict = None):
         self._project_id = project_id
         self._baseurl = f"{base_url}/api/v3/project/{project_id}"
         self._timeout = 10
@@ -34,6 +34,8 @@ class Client(cloud.Client):
             "Connection": "close",
             "accept": "application/json",
         }
+        if headers is not None:
+            self._header.update(headers)
         self._db = None
 
     def hello(self):
@@ -173,13 +175,15 @@ class Vectordb(object):
         return status_code, body
 
     # Create table
-    def create_table(self, table_name: str, table_fields: list[str] = None):
+    def create_table(self, table_name: str, table_fields: list[dict] = None, indices: list[dict] = None):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
         if table_fields is None:
             table_fields = []
         req_url = "{}/table/create".format(self._baseurl)
-        req_data = {"table_name": table_name, "fields": table_fields}
+        req_data = {"name": table_name, "fields": table_fields}
+        if indices is not None:
+            req_data["indices"] = indices
         res = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
@@ -222,6 +226,8 @@ class Vectordb(object):
     def query(
         self,
         table_name: str,
+        query_text: str = None,
+        query_index: str = None,
         query_field: str = None,
         query_vector: Union[list, dict] = None,
         response_fields: Optional[list] = None,
@@ -231,6 +237,10 @@ class Vectordb(object):
     ):
         req_url = "{}/data/query".format(self._baseurl)
         req_data = {"table": table_name}
+        if query_text is not None:
+            req_data["query"] = query_text
+        if query_index is not None:
+            req_data["queryIndex"] = query_index
         if query_field != None:
             req_data["queryField"] = query_field
         if query_vector != None:
