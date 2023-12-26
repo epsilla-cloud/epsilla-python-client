@@ -59,6 +59,17 @@ class Client(object):
         res.close()
         return status_code, body
 
+    def get_db_statistics(self):
+        req_url = "{}/vectordb/{}/statistics".format(self._baseurl, db_id)
+        req_data = None
+        res = requests.get(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+        )
+        status_code = res.status_code
+        body = res.json()
+        res.close()
+        return status_code, body
+
     def vectordb(self, db_id: str):
         # validate project_id and api_key
         res = self.validate()
