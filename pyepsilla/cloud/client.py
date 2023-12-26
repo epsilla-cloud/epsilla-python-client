@@ -61,7 +61,7 @@ class Client(object):
         res.close()
         return status_code, body
 
-    def get_db_statistics(self):
+    def get_db_statistics(self, db_id: str):
         req_url = "{}/vectordb/{}/statistics".format(self._baseurl, db_id)
         req_data = None
         res = requests.get(
@@ -98,7 +98,14 @@ class Client(object):
 
 
 class Vectordb(Client):
-    def __init__(self, project_id: str, db_id: str, api_key: str, public_endpoint: str, headers: dict = None):
+    def __init__(
+        self,
+        project_id: str,
+        db_id: str,
+        api_key: str,
+        public_endpoint: str,
+        headers: dict = None,
+    ):
         self._project_id = project_id
         self._db_id = db_id
         self._api_key = api_key
@@ -122,7 +129,12 @@ class Vectordb(Client):
         return status_code, body
 
     # Create table
-    def create_table(self, table_name: str, table_fields: list[dict] = None, indices: list[dict] = None):
+    def create_table(
+        self,
+        table_name: str,
+        table_fields: list[dict] = None,
+        indices: list[dict] = None,
+    ):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
         if table_fields is None:
