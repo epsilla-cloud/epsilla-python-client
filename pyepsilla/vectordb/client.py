@@ -106,6 +106,19 @@ class Client:
         res.close()
         return status_code, body
 
+    def statistics(self):
+        if self._db is None:
+            raise Exception("[ERROR] Please use_db() first!")
+        req_url = "{}/api/{}/statistics".format(self._baseurl, self._db)
+        req_data = None
+        res = requests.get(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+        )
+        status_code = res.status_code
+        body = res.json()
+        res.close()
+        return status_code, body
+
     def create_table(
         self,
         table_name: str,
@@ -295,19 +308,6 @@ class Client:
 
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
         res = requests.post(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
-        )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
-        return status_code, body
-
-    def statistics(self):
-        if self._db is None:
-            raise Exception("[ERROR] Please use_db() first!")
-        req_url = "{}/api/{}/statistics".format(self._baseurl, self._db)
-        req_data = None
-        res = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
         status_code = res.status_code
