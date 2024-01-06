@@ -166,6 +166,21 @@ class Client:
         res.close()
         return status_code, body
 
+    def upsert(self, table_name: str, records: list = None):
+        if self._db is None:
+            raise Exception("[ERROR] Please use_db() first!")
+        if records is None:
+            records = []
+        req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
+        req_data = {"table": table_name, "data": records, "upsert": True}
+        res = requests.post(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+        )
+        status_code = res.status_code
+        body = res.json()
+        res.close()
+        return status_code, body
+
     def delete(
         self,
         table_name: str,

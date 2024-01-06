@@ -177,6 +177,17 @@ class Vectordb(Client):
         res.close()
         return status_code, body
 
+    def upsert(self, table_name: str, records: list[dict]):
+        req_url = "{}/data/insert".format(self._baseurl)
+        req_data = {"table": table_name, "data": records, "upsert": True}
+        res = requests.post(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+        )
+        status_code = res.status_code
+        body = res.json()
+        res.close()
+        return status_code, body
+
     # Query data from table
     def query(
         self,
