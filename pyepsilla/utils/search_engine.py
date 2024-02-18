@@ -7,6 +7,8 @@ import json
 import socket
 import time
 from typing import Optional, Union
+import asyncio
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class VectorRetriever:
     def __init__(
@@ -138,17 +140,29 @@ class SearchEngine:
             self._reranker = RRFReRanker(weights=weights, k=k, limit=limit)
         return self
 
-    def search(self, query: str) -> list[dict]:
+    async def search(self, query: str) -> list[dict]:
         # If no retriever is added, return error
         if not self._retrievers:
             raise Exception("No retriever added to the search engine")
         # If more than one retrievers are added, must set a reranker
         if len(self._retrievers) > 1 and not self._reranker:
             raise Exception("More than one retriever added to the search engine, but no reranker is set")
-        # Retrieve candidates from each retriever
+
+        # Function to wrap synchronous call in async coroutine
+        def run_retriever(retriever):
+            return retriever.retrieve(query)
+        # Use ThreadPoolExecutor to run retrievers concurrently
         candidates = []
-        for retriever in self._retrievers:
-            candidates.append(retriever.retrieve(query))
+        with ThreadPoolExecutor(max_workers=len(self._retrievers)) as executor:
+            # Schedule the execution of each retriever and immediately return future objects
+            future_to_retriever = {executor.submit(run_retriever, retriever): retriever for retriever in self._retrievers}
+
+            for future in as_completed(future_to_retriever):
+                try:
+                    result = future.result()
+                    candidates.append(result)
+                except Exception as exc:
+                    print(f'Retriever generated an exception: {exc}')
 
         # Rerank candidates if reranker is set
         if self._reranker:
