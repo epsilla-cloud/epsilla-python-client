@@ -7,6 +7,7 @@ import json
 import pprint
 import socket
 from typing import Optional, Union
+from ..utils.search_engine import SearchEngine
 
 import requests
 import sentry_sdk
@@ -360,3 +361,6 @@ class Vectordb(object):
         body = res.json()
         res.close()
         return status_code, body
+
+    def as_search_engine(self):
+        return SearchEngine(self)

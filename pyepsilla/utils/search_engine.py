@@ -7,8 +7,6 @@ import json
 import socket
 import time
 from typing import Optional, Union
-import asyncio
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class VectorRetriever:
     def __init__(
@@ -96,6 +94,87 @@ class RRFReRanker(Reranker):
         # Return only the candidate information, discarding the scores
         return [item["candidate"] for item in sorted_candidates]
 
+class RelativeScoreFusionReranker(Reranker):
+    def __init__(self, limit: int = None):
+        self._limit = limit
+
+    def normalize_distances(self, candidates: list[dict]) -> list[dict]:
+        # Extract all distances
+        distances = [candidate["@distance"] for candidate in candidates]
+
+        if len(distances) < 2 or max(distances) == min(distances):
+            return [{'candidate': candidate, 'score': 1} for candidate in candidates]
+
+        min_distance, max_distance = min(distances), max(distances)
+
+        # Normalize distances: (distance - min_distance) / (max_distance - min_distance)
+        normalized_candidates = []
+        for candidate in candidates:
+            normalized_score = (candidate["@distance"] - min_distance) / (max_distance - min_distance)
+            normalized_candidates.append({'candidate': candidate, 'score': 1 - normalized_score})
+
+        return normalized_candidates
+
+    def rerank(self, candidates: list[list[dict]]) -> list[dict]:
+        normalized_lists = [self.normalize_distances(candidate_list) for candidate_list in candidates]
+
+        # Aggregate normalized scores across lists
+        aggregated_scores = {}
+        for candidate_list in normalized_lists:
+            for item in candidate_list:
+                candidate_id = item['candidate']['@id']
+                if candidate_id in aggregated_scores:
+                    aggregated_scores[candidate_id]['score'] += item['score']
+                else:
+                    aggregated_scores[candidate_id] = item
+
+        # Sort candidates based on aggregated score
+        sorted_candidates = sorted(aggregated_scores.values(), key=lambda x: x['score'], reverse=True)
+
+        # Apply the limit to the final list if specified
+        if self._limit is not None:
+            sorted_candidates = sorted_candidates[:self._limit]
+
+        # Return only the candidate information, discarding the scores
+        return [item['candidate'] for item in sorted_candidates]
+
+class DistributionBasedScoreFusionReranker(Reranker):
+    def __init__(self, scale_ranges: list[list[float]] = [], limit: int = None):
+        self._limit = limit
+        self._scale_ranges = scale_ranges
+
+    def normalize_distances(self, scale: list[float], candidates: list[dict]) -> list[dict]:
+        # Normalize distances: (distance - min_distance) / (max_distance - min_distance)
+        normalized_candidates = []
+        for candidate in candidates:
+            normalized_score = max(candidate["@distance"] - scale[0], 0) / (scale[1] - scale[0])
+            normalized_candidates.append({'candidate': candidate, 'score': 1 - min(1, normalized_score)})
+
+        return normalized_candidates
+
+    def rerank(self, candidates: list[list[dict]]) -> list[dict]:
+        normalized_lists = [self.normalize_distances(self._scale_ranges[i], candidate_list) for i, candidate_list in enumerate(candidates)]
+
+        # Aggregate normalized scores across lists
+        aggregated_scores = {}
+        for candidate_list in normalized_lists:
+            for item in candidate_list:
+                candidate_id = item['candidate']['@id']
+                if candidate_id in aggregated_scores:
+                    aggregated_scores[candidate_id]['score'] += item['score']
+                else:
+                    aggregated_scores[candidate_id] = item
+
+        # Sort candidates based on aggregated score
+        sorted_candidates = sorted(aggregated_scores.values(), key=lambda x: x['score'], reverse=True)
+
+        # Apply the limit to the final list if specified
+        if self._limit is not None:
+            sorted_candidates = sorted_candidates[:self._limit]
+
+        # Return only the candidate information, discarding the scores
+        return [item['candidate'] for item in sorted_candidates]
+
 class SearchEngine:
     def __init__(
         self,
@@ -132,15 +211,22 @@ class SearchEngine:
         )
         return self
 
-    def set_reranker(self, type: str="rrf", weights: list[float] = None, k = 50, limit = None):
-        # The length of weights should be equal to the number of retrievers
-        if weights is not None and len(self._retrievers) != len(weights):
-            raise Exception("The length of weights should be equal to the number of retrievers")
-        if type == "rrf":
+    def set_reranker(self, type: str="rrf", weights: list[float] = None, scale_ranges: list[list[int]] = [], k = 50, limit = None):
+        if type == "rrf" or type == "reciprocal_rank_fusion":
+            if weights is not None and len(self._retrievers) != len(weights):
+                raise Exception("The length of weights should be equal to the number of retrievers")
             self._reranker = RRFReRanker(weights=weights, k=k, limit=limit)
+        elif type == "rsf" or type == "relative_score_fusion":
+            self._reranker = RelativeScoreFusionReranker(limit=limit)
+        elif type == "dbsf" or type == "distribution_based_score_fusion":
+            if len(scale_ranges) != len(self._retrievers):
+                raise Exception("The length of scale_ranges should be equal to the number of retrievers")
+            self._reranker = DistributionBasedScoreFusionReranker(scale_ranges, limit=limit)
+        else:
+            raise Exception("Invalid reranker type: " + type)
         return self
 
-    async def search(self, query: str) -> list[dict]:
+    def search(self, query: str) -> list[dict]:
         # If no retriever is added, return error
         if not self._retrievers:
             raise Exception("No retriever added to the search engine")
@@ -148,21 +234,10 @@ class SearchEngine:
         if len(self._retrievers) > 1 and not self._reranker:
             raise Exception("More than one retriever added to the search engine, but no reranker is set")
 
-        # Function to wrap synchronous call in async coroutine
-        def run_retriever(retriever):
-            return retriever.retrieve(query)
         # Use ThreadPoolExecutor to run retrievers concurrently
         candidates = []
-        with ThreadPoolExecutor(max_workers=len(self._retrievers)) as executor:
-            # Schedule the execution of each retriever and immediately return future objects
-            future_to_retriever = {executor.submit(run_retriever, retriever): retriever for retriever in self._retrievers}
-
-            for future in as_completed(future_to_retriever):
-                try:
-                    result = future.result()
-                    candidates.append(result)
-                except Exception as exc:
-                    print(f'Retriever generated an exception: {exc}')
+        for retriever in self._retrievers:
+            candidates.append(retriever.retrieve(query))
 
         # Rerank candidates if reranker is set
         if self._reranker:
