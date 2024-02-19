@@ -7,6 +7,7 @@ import json
 import socket
 import time
 from typing import Optional, Union
+from ..utils.search_engine import SearchEngine
 
 import requests
 import sentry_sdk
@@ -354,3 +355,6 @@ class Client:
         body = res.json()
         res.close()
         return status_code, body
+
+    def as_search_engine(self):
+        return SearchEngine(self)
