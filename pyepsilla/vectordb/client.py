@@ -250,11 +250,11 @@ class Client:
         query_index: str = None,
         query_field: str = None,
         query_vector: Union[list, dict] = None,
-        response_fields: list = None,
+        response_fields: Optional[list] = None,
         limit: int = 2,
-        filter: str = "",
-        with_distance: bool = False,
-        facets: list[dict] = None,
+        filter: Optional[str] = None,
+        with_distance: Optional[bool] = False,
+        facets: Optional[list[dict]] = None,
     ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
@@ -291,6 +291,7 @@ class Client:
         status_code = res.status_code
         body = res.json()
         res.close()
+        del res
         return status_code, body
 
     def get(
