@@ -7,11 +7,12 @@ import json
 import socket
 import time
 from typing import Optional, Union
-from ..utils.search_engine import SearchEngine
 
 import requests
 import sentry_sdk
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+from ..utils.search_engine import SearchEngine
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -253,6 +254,7 @@ class Client:
         limit: int = 2,
         filter: str = "",
         with_distance: bool = False,
+        facets: list[dict] = None,
     ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
@@ -266,6 +268,15 @@ class Client:
             "filter": filter,
             "withDistance": with_distance,
         }
+        if facets is not None and len(facets) > 0:
+            aggregate_not_existing = 0
+            for facet in facets:
+                if "aggregate" not in facet:
+                    aggregate_not_existing += 1
+            if aggregate_not_existing > 0:
+                raise Exception("[ERROR] key aggregate is a must in facets!")
+            else:
+                req_data["facets"] = facets
         if query_text is not None:
             req_data["query"] = query_text
         if query_index is not None:
