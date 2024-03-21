@@ -7,11 +7,12 @@ import json
 import pprint
 import socket
 from typing import Optional, Union
-from ..utils.search_engine import SearchEngine
 
 import requests
 import sentry_sdk
 from pydantic import BaseModel, Field, constr
+
+from ..utils.search_engine import SearchEngine
 
 requests.packages.urllib3.disable_warnings()  # type: ignore
 
@@ -26,7 +27,9 @@ class DbModel(BaseModel):
 
 
 class Client(cloud.Client):
-    def __init__(self, base_url: str, project_id: Optional[str] = "default", headers: dict = None):
+    def __init__(
+        self, base_url: str, project_id: Optional[str] = "default", headers: dict = None
+    ):
         self._project_id = project_id
         self._baseurl = f"{base_url}/api/v3/project/{project_id}"
         self._timeout = 10
@@ -176,7 +179,12 @@ class Vectordb(object):
         return status_code, body
 
     # Create table
-    def create_table(self, table_name: str, table_fields: list[dict] = None, indices: list[dict] = None):
+    def create_table(
+        self,
+        table_name: str,
+        table_fields: list[dict] = None,
+        indices: list[dict] = None,
+    ):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
         if table_fields is None:
@@ -250,6 +258,7 @@ class Vectordb(object):
         limit: int = 2,
         filter: Optional[str] = None,
         with_distance: Optional[bool] = False,
+        facets: Optional[list[dict]] = None,
     ):
         req_url = "{}/data/query".format(self._baseurl)
         req_data = {"table": table_name}
@@ -257,18 +266,27 @@ class Vectordb(object):
             req_data["query"] = query_text
         if query_index is not None:
             req_data["queryIndex"] = query_index
-        if query_field != None:
+        if query_field is not None:
             req_data["queryField"] = query_field
-        if query_vector != None:
+        if query_vector is not None:
             req_data["queryVector"] = query_vector
-        if response_fields != None:
+        if response_fields is not None:
             req_data["response"] = response_fields
-        if limit != None:
+        if limit is not None:
             req_data["limit"] = limit
-        if filter != None:
+        if filter is not None:
             req_data["filter"] = filter
         if with_distance is not False:
             req_data["withDistance"] = with_distance
+        if facets is not None and len(facets) > 0:
+            aggregate_not_existing = 0
+            for facet in facets:
+                if "aggregate" not in facet:
+                    aggregate_not_existing += 1
+            if aggregate_not_existing > 0:
+                raise Exception("[ERROR] key aggregate is a must in facets!")
+            else:
+                req_data["facets"] = facets
 
         res = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
@@ -276,6 +294,7 @@ class Vectordb(object):
         status_code = res.status_code
         body = res.json()
         res.close()
+        del res
         return status_code, body
 
     # Delete data from table
