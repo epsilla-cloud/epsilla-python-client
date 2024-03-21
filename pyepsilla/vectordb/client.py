@@ -315,7 +315,7 @@ class Client:
             print(
                 "[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!"
             )
-        if primary_keys == None and ids != None:
+        if primary_keys is None and ids is not None:
             primary_keys = ids
 
         req_data = {"table": table_name}
