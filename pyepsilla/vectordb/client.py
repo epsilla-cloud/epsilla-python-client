@@ -303,6 +303,7 @@ class Client:
         filter: Optional[str] = None,
         skip: Optional[int] = None,
         limit: Optional[int] = None,
+        facets: Optional[list[dict]] = None,
     ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
@@ -319,20 +320,30 @@ class Client:
 
         req_data = {"table": table_name}
 
-        if response_fields != None:
+        if response_fields is not None:
             req_data["response"] = response_fields
 
-        if primary_keys != None:
+        if primary_keys is not None:
             req_data["primaryKeys"] = primary_keys
 
-        if filter != None:
+        if filter is not None:
             req_data["filter"] = filter
 
-        if skip != None:
+        if skip is not None:
             req_data["skip"] = filter
 
-        if limit != None:
+        if limit is not None:
             req_data["limit"] = limit
+
+        if facets is not None and len(facets) > 0:
+            aggregate_not_existing = 0
+            for facet in facets:
+                if "aggregate" not in facet:
+                    aggregate_not_existing += 1
+            if aggregate_not_existing > 0:
+                raise Exception("[ERROR] key aggregate is a must in facets!")
+            else:
+                req_data["facets"] = facets
 
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
         res = requests.post(
