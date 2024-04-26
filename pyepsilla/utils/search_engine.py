@@ -56,7 +56,7 @@ class VectorRetriever:
         return response["result"]
 
 class Reranker:
-    def rerank(self, candidates: list[list[any]]) -> list[any]:
+    def rerank(self, candidates: list[list[any]], query: str = None) -> list[any]:
         pass
 
 class RRFReRanker(Reranker):

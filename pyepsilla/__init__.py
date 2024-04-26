@@ -4,3 +4,4 @@
 from . import vectordb
 from . import cloud
 from . import enterprise
+from . import utils
