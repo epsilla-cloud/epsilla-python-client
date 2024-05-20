@@ -52,7 +52,7 @@ class Client:
 
     def welcome(self):
         req_url = "{}/".format(self._baseurl)
-        req_data = None
+        req_data = {}
         resp = requests.get(
             url=req_url,
             data=json.dumps(req_data),
@@ -68,7 +68,7 @@ class Client:
 
     def state(self):
         req_url = "{}/state".format(self._baseurl)
-        req_data = None
+        req_data = {}
         resp = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
@@ -105,7 +105,10 @@ class Client:
 
     def unload_db(self, db_name: str):
         req_url = "{}/api/{}/unload".format(self._baseurl, db_name)
-        resp = requests.post(url=req_url, data=None, headers=self._header, verify=False)
+        req_data = {}
+        resp = requests.post(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+        )
         status_code = resp.status_code
         body = resp.json()
         resp.close()
@@ -116,7 +119,7 @@ class Client:
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         req_url = "{}/api/{}/statistics".format(self._baseurl, self._db)
-        req_data = None
+        req_data = {}
         resp = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
@@ -236,7 +239,7 @@ class Client:
 
     def rebuild(self, timeout: int = 7200):
         req_url = "{}/api/rebuild".format(self._baseurl)
-        req_data = None
+        req_data = {}
         print("[INFO] waiting until rebuild is finished ...")
         start_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         resp = requests.post(
@@ -373,7 +376,7 @@ class Client:
         req_url = "{}/api/{}/schema/tables/{}".format(
             self._baseurl, self._db, table_name
         )
-        req_data = None
+        req_data = {}
         resp = requests.delete(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
@@ -385,8 +388,9 @@ class Client:
 
     def drop_db(self, db_name: str):
         req_url = "{}/api/{}/drop".format(self._baseurl, db_name)
+        req_data = {}
         resp = requests.delete(
-            url=req_url, data=None, headers=self._header, verify=False
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
         status_code = resp.status_code
         body = resp.json()
