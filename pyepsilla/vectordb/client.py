@@ -52,28 +52,30 @@ class Client:
 
     def welcome(self):
         req_url = "{}/".format(self._baseurl)
-        req_data = None
-        res = requests.get(
+        req_data = {}
+        resp = requests.get(
             url=req_url,
             data=json.dumps(req_data),
             headers=self._header,
             timeout=self._timeout,
             verify=False,
         )
-        status_code = res.status_code
-        body = res.text
-        res.close()
+        status_code = resp.status_code
+        body = resp.text
+        resp.close()
+        del resp
         return status_code, body
 
     def state(self):
         req_url = "{}/state".format(self._baseurl)
-        req_data = None
-        res = requests.get(
+        req_data = {}
+        resp = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def use_db(self, db_name: str):
@@ -92,33 +94,39 @@ class Client:
             req_data["vectorScale"] = vector_scale
         if wal_enabled is not None:
             req_data["walEnabled"] = wal_enabled
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def unload_db(self, db_name: str):
         req_url = "{}/api/{}/unload".format(self._baseurl, db_name)
-        res = requests.post(url=req_url, data=None, headers=self._header, verify=False)
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        req_data = {}
+        resp = requests.post(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+        )
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def statistics(self):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         req_url = "{}/api/{}/statistics".format(self._baseurl, self._db)
-        req_data = None
-        res = requests.get(
+        req_data = {}
+        resp = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def create_table(
@@ -135,22 +143,24 @@ class Client:
         req_data = {"name": table_name, "fields": table_fields}
         if indices is not None:
             req_data["indices"] = indices
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def list_tables(self):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         req_url = "{}/api/{}/schema/tables/show".format(self._baseurl, self._db)
-        res = requests.get(url=req_url, headers=self._header, verify=False)
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        resp = requests.get(url=req_url, headers=self._header, verify=False)
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def insert(self, table_name: str, records: list = None):
@@ -160,12 +170,13 @@ class Client:
             records = []
         req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         req_data = {"table": table_name, "data": records}
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def upsert(self, table_name: str, records: list = None):
@@ -175,12 +186,13 @@ class Client:
             records = []
         req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         req_data = {"table": table_name, "data": records, "upsert": True}
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def delete(
@@ -216,20 +228,21 @@ class Client:
             req_data["primaryKeys"] = primary_keys
         if filter != None:
             req_data["filter"] = filter
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def rebuild(self, timeout: int = 7200):
         req_url = "{}/api/rebuild".format(self._baseurl)
-        req_data = None
+        req_data = {}
         print("[INFO] waiting until rebuild is finished ...")
         start_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        res = requests.post(
+        resp = requests.post(
             url=req_url,
             data=json.dumps(req_data),
             headers=self._header,
@@ -238,9 +251,10 @@ class Client:
         )
         end_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         print("[INFO] Start Time:{}\n       End   Time:{}".format(start_time, end_time))
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def query(
@@ -258,16 +272,27 @@ class Client:
     ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
+        req_url = "{}/api/{}/data/query".format(self._baseurl, self._db)
+        req_data = {"table": table_name, "limit": limit}
+
         if response_fields is None:
             response_fields = []
-        req_url = "{}/api/{}/data/query".format(self._baseurl, self._db)
-        req_data = {
-            "table": table_name,
-            "response": response_fields,
-            "limit": limit,
-            "filter": filter,
-            "withDistance": with_distance,
-        }
+
+        if query_text is not None:
+            req_data["query"] = query_text
+        if query_index is not None:
+            req_data["queryIndex"] = query_index
+        if query_field is not None:
+            req_data["queryField"] = query_field
+        if query_vector is not None:
+            req_data["queryVector"] = query_vector
+        if response_fields is not None:
+            req_data["response"] = response_fields
+        if filter is not None:
+            req_data["filter"] = filter
+        if with_distance is not False:
+            req_data["withDistance"] = with_distance
+
         if facets is not None and len(facets) > 0:
             aggregate_not_existing = 0
             for facet in facets:
@@ -277,21 +302,14 @@ class Client:
                 raise Exception("[ERROR] key aggregate is a must in facets!")
             else:
                 req_data["facets"] = facets
-        if query_text is not None:
-            req_data["query"] = query_text
-        if query_index is not None:
-            req_data["queryIndex"] = query_index
-        if query_field is not None:
-            req_data["queryField"] = query_field
-        if query_vector is not None:
-            req_data["queryVector"] = query_vector
-        res = requests.post(
+
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
-        del res
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def get(
@@ -307,7 +325,7 @@ class Client:
     ):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
-        if primary_keys != None and ids != None:
+        if primary_keys is not None and ids is not None:
             try:
                 sentry_sdk.sdk("Duplicate Keys with both primary keys and ids", "info")
             except Exception as e:
@@ -315,6 +333,7 @@ class Client:
             print(
                 "[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!"
             )
+
         if primary_keys is None and ids is not None:
             primary_keys = ids
 
@@ -322,16 +341,12 @@ class Client:
 
         if response_fields is not None:
             req_data["response"] = response_fields
-
         if primary_keys is not None:
             req_data["primaryKeys"] = primary_keys
-
         if filter is not None:
             req_data["filter"] = filter
-
         if skip is not None:
-            req_data["skip"] = filter
-
+            req_data["skip"] = skip
         if limit is not None:
             req_data["limit"] = limit
 
@@ -346,12 +361,13 @@ class Client:
                 req_data["facets"] = facets
 
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def drop_table(self, table_name: str = None):
@@ -360,23 +376,26 @@ class Client:
         req_url = "{}/api/{}/schema/tables/{}".format(
             self._baseurl, self._db, table_name
         )
-        req_data = None
-        res = requests.delete(
+        req_data = {}
+        resp = requests.delete(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def drop_db(self, db_name: str):
         req_url = "{}/api/{}/drop".format(self._baseurl, db_name)
-        res = requests.delete(
-            url=req_url, data=None, headers=self._header, verify=False
+        req_data = {}
+        resp = requests.delete(
+            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def as_search_engine(self):

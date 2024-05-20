@@ -49,21 +49,23 @@ class Client(cloud.Client):
     def get_db_list(self):
         db_list = []
         req_url = "{}/vectordb/list".format(self._baseurl)
-        res = requests.get(url=req_url, data=None, headers=self._header, verify=False)
-        status_code = res.status_code
-        body = res.json()
+        resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
+        status_code = resp.status_code
+        body = resp.json()
         if status_code == 200 and body["statusCode"] == 200:
-            db_list = res.json()["result"]["uuids"]
-        res.close()
+            db_list = resp.json()["result"]["uuids"]
+        resp.close()
+        del resp
         return db_list
 
     # Get DB Information by db_id
     def get_db_info(self, db_id: str):
         req_url = "{}/vectordb/{}".format(self._baseurl, db_id)
-        res = requests.get(url=req_url, data=None, headers=self._header, verify=False)
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     # Connect to DB
@@ -113,6 +115,7 @@ class Client(cloud.Client):
         status_code = resp.status_code
         body = resp.json()
         resp.close()
+        del resp
         return status_code, body
 
     # Load DB
@@ -128,6 +131,7 @@ class Client(cloud.Client):
         status_code = resp.status_code
         body = resp.json()
         resp.close()
+        del resp
         return status_code, body
 
     # Unload DB
@@ -143,6 +147,7 @@ class Client(cloud.Client):
         status_code = resp.status_code
         body = resp.json()
         resp.close()
+        del resp
         return status_code, body
 
     # Delete DB
@@ -172,10 +177,10 @@ class Vectordb(object):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
         req_url = "{}/table/list".format(self._baseurl)
-        res = requests.get(url=req_url, headers=self._header, verify=False)
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        resp = requests.get(url=req_url, headers=self._header, verify=False)
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
         return status_code, body
 
     # Create table
@@ -193,12 +198,13 @@ class Vectordb(object):
         req_data = {"name": table_name, "fields": table_fields}
         if indices is not None:
             req_data["indices"] = indices
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     # Drop table
@@ -207,12 +213,13 @@ class Vectordb(object):
             raise Exception("[ERROR] db_id is None!")
         req_url = "{}/table/delete?table_name={}".format(self._baseurl, table_name)
         req_data = {}
-        res = requests.delete(
+        resp = requests.delete(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     # Insert data into table
@@ -223,12 +230,13 @@ class Vectordb(object):
             records = []
         req_url = "{}/data/insert".format(self._baseurl)
         req_data = {"table": table_name, "data": records}
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def upsert(self, table_name: str, records: list[dict]):
@@ -238,12 +246,13 @@ class Vectordb(object):
             records = []
         req_url = "{}/data/insert".format(self._baseurl)
         req_data = {"table": table_name, "data": records, "upsert": True}
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     # Query data from table
@@ -261,7 +270,11 @@ class Vectordb(object):
         facets: Optional[list[dict]] = None,
     ):
         req_url = "{}/data/query".format(self._baseurl)
-        req_data = {"table": table_name}
+        req_data = {"table": table_name, "limit": limit}
+
+        if response_fields is None:
+            response_fields = []
+
         if query_text is not None:
             req_data["query"] = query_text
         if query_index is not None:
@@ -272,12 +285,11 @@ class Vectordb(object):
             req_data["queryVector"] = query_vector
         if response_fields is not None:
             req_data["response"] = response_fields
-        if limit is not None:
-            req_data["limit"] = limit
         if filter is not None:
             req_data["filter"] = filter
         if with_distance is not False:
             req_data["withDistance"] = with_distance
+
         if facets is not None and len(facets) > 0:
             aggregate_not_existing = 0
             for facet in facets:
@@ -288,13 +300,13 @@ class Vectordb(object):
             else:
                 req_data["facets"] = facets
 
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
-        del res
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     # Delete data from table
@@ -306,14 +318,14 @@ class Vectordb(object):
         filter: Optional[str] = None,
     ):
         """Epsilla supports delete records by primary keys as default for now."""
-        if filter == None:
-            if primary_keys == None and ids == None:
+        if filter is None:
+            if primary_keys is None and ids is None:
                 raise Exception(
                     "[ERROR] Please provide at least one of primary keys(ids) and filter to delete record(s)."
                 )
-        if primary_keys == None and ids != None:
+        if primary_keys is None and ids is not None:
             primary_keys = ids
-        if primary_keys != None and ids != None:
+        if primary_keys is not None and ids is not None:
             try:
                 sentry_sdk.sdk("Duplicate Keys with both primary keys and ids", "info")
             except Exception as e:
@@ -324,17 +336,18 @@ class Vectordb(object):
 
         req_url = "{}/data/delete".format(self._baseurl)
         req_data = {"table": table_name}
-        if primary_keys != None:
+        if primary_keys is not None:
             req_data["primaryKeys"] = primary_keys
-        if filter != None:
+        if filter is not None:
             req_data["filter"] = filter
 
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     ## get data from table
@@ -347,9 +360,10 @@ class Vectordb(object):
         filter: Optional[str] = None,
         skip: Optional[int] = None,
         limit: Optional[int] = None,
+        facets: Optional[list[dict]] = None,
     ):
         """Epsilla supports get records by primary keys as default for now."""
-        if primary_keys != None and ids != None:
+        if primary_keys is not None and ids is not None:
             try:
                 sentry_sdk.sdk("Duplicate Keys with both primary_keys and ids", "info")
             except Exception as e:
@@ -357,28 +371,40 @@ class Vectordb(object):
             print(
                 "[WARN]Both primary_keys and ids are prvoided, will use primary keys by default!"
             )
-        if primary_keys == None and ids != None:
+        if primary_keys is None and ids is not None:
             primary_keys = ids
 
         req_data = {"table": table_name}
-        if response_fields != None:
+
+        if response_fields is not None:
             req_data["response"] = response_fields
-        if primary_keys != None:
+        if primary_keys is not None:
             req_data["primaryKeys"] = primary_keys
-        if filter != None:
+        if filter is not None:
             req_data["filter"] = filter
-        if skip != None:
+        if skip is not None:
             req_data["skip"] = skip
-        if limit != None:
+        if limit is not None:
             req_data["limit"] = limit
 
+        if facets is not None and len(facets) > 0:
+            aggregate_not_existing = 0
+            for facet in facets:
+                if "aggregate" not in facet:
+                    aggregate_not_existing += 1
+            if aggregate_not_existing > 0:
+                raise Exception("[ERROR] key aggregate is a must in facets!")
+            else:
+                req_data["facets"] = facets
+
         req_url = "{}/data/get".format(self._baseurl)
-        res = requests.post(
+        resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = res.status_code
-        body = res.json()
-        res.close()
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
         return status_code, body
 
     def as_search_engine(self):
