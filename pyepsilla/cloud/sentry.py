@@ -39,7 +39,7 @@ def get_external_ip() -> str:
 
 
 def init_sentry():
-    if "SENTRY_DISABLE" not in os.environ:
+    if os.getenv("SENTRY_DISABLE", None) is not None:
         try:
             uid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
             internal_ip = socket.gethostbyname(socket.gethostname())
@@ -70,3 +70,5 @@ def init_sentry():
         except Exception:
             sentry_sdk.flush()
             pass
+    else:
+        return None

@@ -20,7 +20,9 @@ CONFIG_URL = "https://config.epsilla.com/candidate.json"
 SENTRY_DSN = "https://3f89b94a4a2e7620c8ecce81cb302d43@o4507288359862272.ingest.us.sentry.io/4507288364908545"
 
 try:
-    r = requests.get(CONFIG_URL, headers={"Agent": "PyEpsilla Cloud Client"}, timeout=2)
+    r = requests.get(
+        CONFIG_URL, headers={"Agent": "PyEpsilla Enterprise Client"}, timeout=2
+    )
     if r.status_code == 200:
         SENTRY_DSN = r.json()["pyepsilla"][0]
 except Exception:
@@ -39,7 +41,7 @@ def get_external_ip() -> str:
 
 
 def init_sentry():
-    if "SENTRY_DISABLE" not in os.environ:
+    if os.getenv("SENTRY_DISABLE", None) is not None:
         try:
             uid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
             internal_ip = socket.gethostbyname(socket.gethostname())
@@ -66,7 +68,9 @@ def init_sentry():
                 integrations=[AtexitIntegration(callback=callback)],
             )
 
-            sentry_sdk.capture_message("PyEpsilla Cloud Client Init", "info")
+            sentry_sdk.capture_message("PyEpsilla Enterprise Client Init", "info")
         except Exception:
             sentry_sdk.flush()
             pass
+    else:
+        return None

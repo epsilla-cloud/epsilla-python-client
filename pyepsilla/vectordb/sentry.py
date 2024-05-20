@@ -18,7 +18,7 @@ from sentry_sdk.integrations.atexit import AtexitIntegration
 from .version import __version__
 
 CONFIG_URL = "https://config.epsilla.com/candidate.json"
-SENTRY_DSN = "https://7b7043e213409f7125c511127697d668@o4506949201428480.ingest.us.sentry.io/4506949333680128"
+SENTRY_DSN = "https://3f89b94a4a2e7620c8ecce81cb302d43@o4507288359862272.ingest.us.sentry.io/4507288364908545"
 
 try:
     r = requests.get(CONFIG_URL, headers={"Agent": "PyEpsilla"}, timeout=2)
@@ -40,7 +40,7 @@ def get_external_ip() -> str:
 
 
 def init_sentry():
-    if "SENTRY_DISABLE" not in os.environ:
+    if os.getenv("SENTRY_DISABLE", None) is not None:
         try:
             uid = hashlib.sha256(str(uuid.getnode()).encode()).hexdigest()
             internal_ip = socket.gethostbyname(socket.gethostname())
@@ -71,3 +71,5 @@ def init_sentry():
         except Exception:
             sentry_sdk.flush()
             pass
+    else:
+        return None
