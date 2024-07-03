@@ -12,6 +12,7 @@ import requests
 import sentry_sdk
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
+from ..utils.rest_api import get_call, post_call, delete_call
 from ..utils.search_engine import SearchEngine
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -53,30 +54,20 @@ class Client:
     def welcome(self):
         req_url = "{}/".format(self._baseurl)
         req_data = {}
-        resp = requests.get(
+        return get_call(
             url=req_url,
             data=json.dumps(req_data),
             headers=self._header,
             timeout=self._timeout,
             verify=False,
         )
-        status_code = resp.status_code
-        body = resp.text
-        resp.close()
-        del resp
-        return status_code, body
 
     def state(self):
         req_url = "{}/state".format(self._baseurl)
         req_data = {}
-        resp = requests.get(
+        return get_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def use_db(self, db_name: str):
         self._db = db_name
@@ -94,40 +85,25 @@ class Client:
             req_data["vectorScale"] = vector_scale
         if wal_enabled is not None:
             req_data["walEnabled"] = wal_enabled
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def unload_db(self, db_name: str):
         req_url = "{}/api/{}/unload".format(self._baseurl, db_name)
         req_data = {}
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def statistics(self):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         req_url = "{}/api/{}/statistics".format(self._baseurl, self._db)
         req_data = {}
-        resp = requests.get(
+        return get_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def create_table(
         self,
@@ -143,25 +119,15 @@ class Client:
         req_data = {"name": table_name, "fields": table_fields}
         if indices is not None:
             req_data["indices"] = indices
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def list_tables(self):
         if self._db is None:
             raise Exception("[ERROR] Please use_db() first!")
         req_url = "{}/api/{}/schema/tables/show".format(self._baseurl, self._db)
-        resp = requests.get(url=req_url, headers=self._header, verify=False)
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
+        return get_call(url=req_url, headers=self._header, verify=False)
 
     def insert(self, table_name: str, records: list = None):
         if self._db is None:
@@ -170,14 +136,9 @@ class Client:
             records = []
         req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         req_data = {"table": table_name, "data": records}
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def upsert(self, table_name: str, records: list = None):
         if self._db is None:
@@ -186,14 +147,9 @@ class Client:
             records = []
         req_url = "{}/api/{}/data/insert".format(self._baseurl, self._db)
         req_data = {"table": table_name, "data": records, "upsert": True}
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def delete(
         self,
@@ -228,21 +184,16 @@ class Client:
             req_data["primaryKeys"] = primary_keys
         if filter != None:
             req_data["filter"] = filter
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def rebuild(self, timeout: int = 7200):
         req_url = "{}/api/rebuild".format(self._baseurl)
         req_data = {}
         print("[INFO] waiting until rebuild is finished ...")
         start_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        resp = requests.post(
+        status_code, body = post_call(
             url=req_url,
             data=json.dumps(req_data),
             headers=self._header,
@@ -251,10 +202,6 @@ class Client:
         )
         end_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         print("[INFO] Start Time:{}\n       End   Time:{}".format(start_time, end_time))
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
         return status_code, body
 
     def query(
@@ -303,14 +250,9 @@ class Client:
             else:
                 req_data["facets"] = facets
 
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def get(
         self,
@@ -361,14 +303,9 @@ class Client:
                 req_data["facets"] = facets
 
         req_url = "{}/api/{}/data/get".format(self._baseurl, self._db)
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def drop_table(self, table_name: str = None):
         if self._db is None:
@@ -377,26 +314,16 @@ class Client:
             self._baseurl, self._db, table_name
         )
         req_data = {}
-        resp = requests.delete(
+        return delete_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def drop_db(self, db_name: str):
         req_url = "{}/api/{}/drop".format(self._baseurl, db_name)
         req_data = {}
-        resp = requests.delete(
+        return delete_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def as_search_engine(self):
         return SearchEngine(self)

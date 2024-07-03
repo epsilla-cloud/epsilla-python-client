@@ -12,12 +12,16 @@ import requests
 import sentry_sdk
 from pydantic import BaseModel, Field, constr
 
+from ..abstract_class.vector_db import AbstractVectordb
+from ..abstract_class.client import AbstractClient
+
+from ..utils.rest_api import get_call, post_call, delete_call
 from ..utils.search_engine import SearchEngine
 
 requests.packages.urllib3.disable_warnings()
 
 
-class Client(object):
+class Client(AbstractClient):
     def __init__(self, project_id: str, api_key: str, headers: dict = None):
         self._project_id = project_id
         self._apikey = api_key
@@ -34,49 +38,32 @@ class Client(object):
             self._header.update(headers)
 
     def validate(self):
-        resp = requests.get(
+        _, data = get_call(
             url=self._baseurl + "/vectordb/list",
             data=None,
             headers=self._header,
             verify=False,
         )
-        data = resp.json()
-        resp.close()
-        del resp
         return data
 
     def get_db_list(self):
         db_list = []
         req_url = "{}/vectordb/list".format(self._baseurl)
-        resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
-        status_code = resp.status_code
-        body = resp.json()
-        if status_code == 200 and body["statusCode"] == 200:
+        status_code, body = get_call(url=req_url, data=None, headers=self._header, verify=False)
+        if status_code == requests.ok and body["statusCode"] == requests.ok:
             db_list = [db_id for db_id in body["result"]]
-        resp.close()
-        del resp
         return db_list
 
     def get_db_info(self, db_id: str):
         req_url = "{}/vectordb/{}".format(self._baseurl, db_id)
-        resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
+        return get_call(url=req_url, data=None, headers=self._header, verify=False)
 
     def get_db_statistics(self, db_id: str):
         req_url = "{}/vectordb/{}/statistics".format(self._baseurl, db_id)
         req_data = None
-        resp = requests.get(
+        return get_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def vectordb(self, db_id: str):
         # validate project_id and api_key
@@ -94,7 +81,7 @@ class Client(object):
 
         # fetch db public endpoint
         status_code, resp = self.get_db_info(db_id=db_id)
-        if resp["statusCode"] == 200:
+        if resp["statusCode"] == requests.ok:
             return Vectordb(
                 self._project_id, db_id, self._apikey, resp["result"]["public_endpoint"]
             )
@@ -104,7 +91,7 @@ class Client(object):
             raise Exception("Failed to get db info")
 
 
-class Vectordb(Client):
+class Vectordb(Client, AbstractVectordb):
     def __init__(
         self,
         project_id: str,
@@ -129,12 +116,7 @@ class Vectordb(Client):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
         req_url = "{}/table/list".format(self._baseurl)
-        resp = requests.get(url=req_url, headers=self._header, verify=False)
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
+        return get_call(url=req_url, headers=self._header, verify=False)
 
     # Create table
     def create_table(
@@ -151,14 +133,9 @@ class Vectordb(Client):
         req_data = {"name": table_name, "fields": table_fields}
         if indices is not None:
             req_data["indices"] = indices
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     # Drop table
     def drop_table(self, table_name: str):
@@ -166,39 +143,24 @@ class Vectordb(Client):
             raise Exception("[ERROR] db_id is None!")
         req_url = "{}/table/delete?table_name={}".format(self._baseurl, table_name)
         req_data = {}
-        resp = requests.delete(
+        return delete_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     # Insert data into table
     def insert(self, table_name: str, records: list[dict]):
         req_url = "{}/data/insert".format(self._baseurl)
         req_data = {"table": table_name, "data": records}
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def upsert(self, table_name: str, records: list[dict]):
         req_url = "{}/data/insert".format(self._baseurl)
         req_data = {"table": table_name, "data": records, "upsert": True}
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     # Query data from table
     def query(
@@ -245,14 +207,9 @@ class Vectordb(Client):
             else:
                 req_data["facets"] = facets
 
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     # Delete data from table
     def delete(
@@ -286,14 +243,9 @@ class Vectordb(Client):
         if filter is not None:
             req_data["filter"] = filter
 
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     # Get data from table
     def get(
@@ -343,14 +295,9 @@ class Vectordb(Client):
                 req_data["facets"] = facets
 
         req_url = "{}/data/get".format(self._baseurl)
-        resp = requests.post(
+        return post_call(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
-        status_code = resp.status_code
-        body = resp.json()
-        resp.close()
-        del resp
-        return status_code, body
 
     def as_search_engine(self):
         return SearchEngine(self)
