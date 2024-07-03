@@ -12,6 +12,9 @@ import requests
 import sentry_sdk
 from pydantic import BaseModel, Field, constr
 
+from ..abstract_class.vector_db import AbstractVectordb
+from ..abstract_class.client import AbstractClient
+
 from ..utils.search_engine import SearchEngine
 
 requests.packages.urllib3.disable_warnings()  # type: ignore
@@ -26,7 +29,7 @@ class DbModel(BaseModel):
     project_id: Optional[str] = "default"
 
 
-class Client(cloud.Client):
+class Client(cloud.Client, AbstractClient):
     def __init__(
         self, base_url: str, project_id: Optional[str] = "default", headers: dict = None
     ):
@@ -166,7 +169,7 @@ class Client(cloud.Client):
         return status_code, body
 
 
-class Vectordb(object):
+class Vectordb(AbstractVectordb):
     def __init__(self, project_url: str, db_id: str, header: dict):
         self._db_id = db_id
         self._baseurl = "{}/vectordb/{}".format(project_url, db_id)

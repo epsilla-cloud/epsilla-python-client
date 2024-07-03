@@ -12,12 +12,15 @@ import requests
 import sentry_sdk
 from pydantic import BaseModel, Field, constr
 
+from ..abstract_class.vector_db import AbstractVectordb
+from ..abstract_class.client import AbstractClient
+
 from ..utils.search_engine import SearchEngine
 
 requests.packages.urllib3.disable_warnings()
 
 
-class Client(object):
+class Client(AbstractClient):
     def __init__(self, project_id: str, api_key: str, headers: dict = None):
         self._project_id = project_id
         self._apikey = api_key
@@ -104,7 +107,7 @@ class Client(object):
             raise Exception("Failed to get db info")
 
 
-class Vectordb(Client):
+class Vectordb(Client, AbstractVectordb):
     def __init__(
         self,
         project_id: str,
