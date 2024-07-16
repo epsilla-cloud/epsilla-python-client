@@ -112,9 +112,9 @@ Please check https://github.com/epsilla-cloud/epsilla-python-client/blob/main/ex
 
 
 ## Contributing
-Bug reports and pull requests are welcome on GitHub at https://github.com/epsilla-cloud/epsilla-python-client/
+Bug reports and pull requests are welcome on GitHub at [here](https://github.com/epsilla-cloud/epsilla-python-client)
 
-If you have any question or problem, please join our discord https://discord.com/invite/cDaY2CxZc5
+If you have any question or problem, please join our [discord](https://discord.com/invite/cDaY2CxZc5)
 
-## We love your <a href="https://forms.gle/z73ra1sGBxH9wiUR8">Feedback</a>!
+We love your <a href="https://forms.gle/z73ra1sGBxH9wiUR8">Feedback</a>!
 
