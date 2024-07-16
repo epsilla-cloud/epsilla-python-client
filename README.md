@@ -12,7 +12,7 @@ or
 pip3 install --upgrade pyepsilla
 ```
 
-## Documentation
+## Connect to Epsill Vector Database
 
 ### 1.1 Run epsilla vectordb on localhost
 ```shell
@@ -93,8 +93,7 @@ print(response)
 ```
 
 
-
-### 2 Run epsilla vectordb on epsilla cloud
+## Connect to Epsill Cloud
 
 ```python3
 
