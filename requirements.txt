@@ -2,4 +2,5 @@ requests
 sentry_sdk
 posthog
 py-machineid
+py
 python-dotenv

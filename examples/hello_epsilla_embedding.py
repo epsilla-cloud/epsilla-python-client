@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-# Try this simple example
-# 1. docker pull epsilla/vectordb
-# 2. docker run --pull=always -d -p 8888:8888 epsilla/vectordb
-# 3. pip3 install --upgrade pyepsilla
-# 4. python3 hellp_epsilla_embedding.py
+"""
+Try this simple example
+    Step 1: docker pull epsilla/vectordb
+    Step 2: docker run --pull=always -d -p 8888:8888 epsilla/vectordb
+    Step 3: For Mac (Unix)/Linux: pip3 install --upgrade pyepsilla
+            For Windows:          pip install --upgrade pyepsilla
+    Step 4: For Mac(Unix)/Linux: python3 hello_epsilla_embedding.py
+            For Windows:         python hello_epsilla_embedding.py
+"""
 
 from pyepsilla import vectordb
 

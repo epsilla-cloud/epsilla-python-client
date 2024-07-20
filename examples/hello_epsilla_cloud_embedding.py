@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-# Try this simple example for epsilla cloud
-# 1. create project and db on epsilla cloud
-# 2. create a table with schema in db
-# 3. get the api key with project id, run this program
+"""
+Try this simple example for Epsilla Cloud
+    Step 1: Create project and db on Epsilla Cloud
+    Step 2: Create a table with schema in db
+    Step 3: Get the API key with project id, run this program
+"""
 
 import sys
 import os
