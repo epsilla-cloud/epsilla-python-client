@@ -7,17 +7,28 @@
 # 3. get the api key with project id, run this program
 
 import sys
-
+import os
 from pyepsilla import cloud
+from dotenv import load_dotenv, find_dotenv
 
-# Connect to Epsilla Cloud
-client = cloud.Client(
-    project_id="7a68814c-f839-4a67-9ec6-93c027c865e6",
-    api_key="epsilla-cloud-api-key",
-)
+# Import the keys from .env file
+load_dotenv(find_dotenv())
+PROJECT_ID = os.getenv("PROJECT_ID")
+EPSILLA_CLOUD_API_KEY = os.getenv("EPSILLA_CLOUD_API_KEY")
+DB_ID = os.getenv("DB_ID")
 
-# Connect to Vectordb
-db = client.vectordb(db_id="6accafb1-476d-43b0-aa64-12ebfbf7442d")
+try:
+    # Connect to Epsilla Cloud
+    client = cloud.Client(
+        project_id=PROJECT_ID,
+        api_key=EPSILLA_CLOUD_API_KEY,
+    )
+
+    # Connect to Vectordb
+    db = client.vectordb(db_id=DB_ID)
+    
+except Exception as e:
+    print(f"Failed to connect to Epsilla Cloud: {e}")
 
 
 # Create a table with schema
@@ -29,7 +40,10 @@ status_code, response = db.create_table(
         {"name": "Embedding", "dataType": "VECTOR_FLOAT", "dimensions": 4},
     ],
 )
-print(status_code, response)
+if status_code != 200:
+    raise Exception(response)
+        
+print(response)
 
 
 # Insert new vector records into table
@@ -43,7 +57,10 @@ status_code, response = db.insert(
         {"ID": 5, "Doc": "Shanghai", "Embedding": [0.24, 0.18, 0.22, 0.44]},
     ],
 )
-print(status_code, response)
+if status_code != 200:
+    raise Exception(response)
+        
+print(response)
 
 # Query Vectors with specific response field, otherwise it will return all fields
 status_code, response = db.query(
@@ -53,14 +70,30 @@ status_code, response = db.query(
     response_fields=["Doc"],
     limit=2,
 )
-print(status_code, response)
+if status_code != 200:
+    raise Exception(response)
+        
+print(response)
 
 
-# Delete specific records from table
+# Delete specific records from 
 status_code, response = db.delete(table_name="MyTable", primary_keys=[4, 5])
+if status_code != 200:
+    raise Exception(response)
+        
+print(response)
+
+# Delete records with filter conditions
 status_code, response = db.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
-print(status_code, response)
+if status_code != 200:
+    raise Exception(response)
+        
+print(response)
 
 # Drop table
+# This never works either through code or GUI
 status_code, response = db.drop_table(table_name="MyTable")
-print(status_code, response)
+if status_code != 200:
+    raise Exception(response)
+        
+print(response)

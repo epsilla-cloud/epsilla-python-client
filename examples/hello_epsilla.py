@@ -2,9 +2,10 @@
 # -*- coding:utf-8 -*-
 
 # Try this simple example
-# 1. docker run --pull=always -d -p 8888:8888 epsilla/vectordb
-# 2. pip3 install --upgrade pyepsilla
-# 3. python3 simple_example.py
+# 1. docker pull epsilla/vectordb
+# 2. docker run --pull=always -d -p 8888:8888 epsilla/vectordb
+# 3. pip3 install --upgrade pyepsilla
+# 4. python3 hello_epsilla.py
 #
 
 from pyepsilla import vectordb
