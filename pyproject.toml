@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "epsilla-python-client"
+name = "pyepsilla"
 version = "0.3.8"
 description = ""
 authors = ["Epsilla <info@epsilla.com>"]
