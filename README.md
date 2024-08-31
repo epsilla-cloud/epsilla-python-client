@@ -12,9 +12,9 @@ or
 pip3 install --upgrade pyepsilla
 ```
 
-## Connect to Epsill Vector Database
+## Connect to Epsilla Vector Database
 
-#### Run epsilla vectordb on localhost
+#### Run vectordb on localhost
 ```shell
 docker pull epsilla/vectordb
 docker run -d -p 8888:8888 epsilla/vectordb
@@ -90,7 +90,7 @@ client.unload_db("MyDB")
 ```
 
 
-## Connect to Epsill Cloud
+## Connect to Epsilla Cloud
 
 #### Register and create vectordb on Epsilla Cloud
 https://cloud.epsilla.com
@@ -108,7 +108,7 @@ db = client.vectordb(db_id="df7431d0-****-****-****-************")
 ```
 
 
-## Connect to Epsill RAG
+## Connect to Epsilla RAG
 
 The resp will contains answer as well as contexts, like {"answer": "**", "contexts": ['context1','context2']}
 
