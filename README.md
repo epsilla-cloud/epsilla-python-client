@@ -1,7 +1,7 @@
 # Epsilla Python SDK
 
-Welcome to Python SDK for Epsilla Vector Database! 
-https://pypi.org/project/pyepsilla/#history
+Welcome to Python SDK for Epsilla Vector Database!
+- <a href="https://pypi.org/project/pyepsilla/#history">Release History</a>
 
 ## Install pyepsilla
 ```shell
