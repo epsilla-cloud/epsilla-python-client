@@ -2,10 +2,7 @@
 # -*- coding:utf-8 -*-
 from __future__ import annotations
 
-import datetime
 import json
-import pprint
-import socket
 from typing import Optional, Union
 
 import requests
@@ -21,9 +18,7 @@ class Client(object):
     def __init__(self, project_id: str, api_key: str, headers: dict = None):
         self._project_id = project_id
         self._apikey = api_key
-        self._baseurl = "https://dispatch.epsilla.com/api/v3/project/{}".format(
-            self._project_id
-        )
+        self._baseurl = f"https://dispatch.epsilla.com/api/v3/project/{self._project_id}"  # type: ignore
         self._timeout = 10
         self._header = {
             "Content-type": "application/json",
@@ -117,9 +112,7 @@ class Vectordb(Client):
         self._db_id = db_id
         self._api_key = api_key
         self._public_endpoint = public_endpoint
-        self._baseurl = "https://{}/api/v3/project/{}/vectordb/{}".format(
-            self._public_endpoint, self._project_id, self._db_id
-        )
+        self._baseurl = f"https://{self._public_endpoint}/api/v3/project/{self._project_id}/vectordb/{self._db_id}"
         self._header = {"Content-type": "application/json", "X-API-Key": self._api_key}
         if headers is not None:
             self._header.update(headers)

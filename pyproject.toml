@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "epsilla-python-client"
+version = "0.3.8"
+description = ""
+authors = ["eric-epsilla <eric@epsilla.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+boto3 = "^1.35.5"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
