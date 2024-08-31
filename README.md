@@ -8,8 +8,6 @@
 
 <hr />
 
-# Epsilla Python SDK
-
 Welcome to Python SDK for Epsilla Vector Database!
 - <a href="https://epsilla-inc.gitbook.io/epsilladb/vector-database/connect-to-a-database">QuickStart</a>
 - <a href="https://pypi.org/project/pyepsilla/#history">Release History</a>
