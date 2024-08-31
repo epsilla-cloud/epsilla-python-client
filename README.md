@@ -106,7 +106,7 @@ db = client.vectordb(db_id="df7431d0-****-****-****-************")
 
 ## Connect to Epsilla RAG
 
-The resp will contains answer as well as contexts, like {"answer": "**", "contexts": ['context1','context2']}
+The resp will contains answer as well as contexts, like {"answer": "****", "contexts": ['context1','context2', ...]}
 
 ```python3
 from pyepsilla import cloud
