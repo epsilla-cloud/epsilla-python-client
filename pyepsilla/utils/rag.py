@@ -24,7 +24,7 @@ class RAG(object):
         self._rag_base_url = "https://rag.epsilla.com"
         self._headers = {"Content-Type": "application/json", "X-API-Key": self._api_key}
         self._timeout = 15
-        self._interval = 5
+        self._interval = 2
 
     def start_new_conversation(self):
         if self._conversation_id is None:
@@ -71,7 +71,7 @@ class RAG(object):
         del resp
 
         if body["statusCode"] == 200:
-            time.sleep(self._interval)
+            time.sleep(self._interval * 4)
             req_message_id = body["result"]
 
             completed = False
