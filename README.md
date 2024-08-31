@@ -14,13 +14,13 @@ pip3 install --upgrade pyepsilla
 
 ## Connect to Epsill Vector Database
 
-### 1.1 Run epsilla vectordb on localhost
+#### Run epsilla vectordb on localhost
 ```shell
 docker pull epsilla/vectordb
 docker run -d -p 8888:8888 epsilla/vectordb
 ```
 
-### 1.2 Use pyepsilla to connect to and interact with local vector database
+#### Use pyepsilla to connect to and interact with local vector database
 
 ```python
 from pyepsilla import vectordb
@@ -76,39 +76,59 @@ status_code, response = client.query(
 )
 print(response)
 
-
-
 ## delete records by primary_keys (and filter)
-# status_code, response =  client.delete(table_name="MyTable", ids=[3])
 status_code, response =  client.delete(table_name="MyTable", primary_keys=[3, 4])
-# status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
+status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
 print(response)
 
 
 ## drop a table
-#client.drop_table("MyTable")
+client.drop_table("MyTable")
 
 ## unload a database from memory
-#client.unload_db("MyDB")
+client.unload_db("MyDB")
 ```
 
 
 ## Connect to Epsill Cloud
 
-```python3
+#### Register and create vectordb on Epsilla Cloud
+https://cloud.epsilla.com
 
+#### Use Epsilla Cloud module to connect with the vectordb
+Please check https://github.com/epsilla-cloud/epsilla-python-client/blob/main/examples/hello_epsilla_cloud.py for detail.
+```python3
 from pyepsilla import cloud
 
 # Connect to Epsilla Cloud
-client = cloud.Client(project_id="32ef3a3f-****-****-****-************", api_key="epsilla*****")
+client = cloud.Client(project_id="32ef3a3f-****-****-****-************", api_key="eps_**********")
 
 # Connect to Vectordb
 db = client.vectordb(db_id="df7431d0-****-****-****-************")
-
 ```
-Please check https://github.com/epsilla-cloud/epsilla-python-client/blob/main/examples/hello_epsilla_cloud.py for detail.
 
 
+## Connect to Epsill RAG
+
+The resp will contains answer as well as contexts, like {"answer": "**", "contexts": ['context1','context2']}
+
+```python3
+from pyepsilla import cloud
+
+# Connect to Epsilla RAG
+client = cloud.RAG(
+    project_id="ce07c6fc-****-****-b7bd-b7819f22bcff",
+    api_key="eps_**********",
+    ragapp_id="153a5a49-****-****-b2b8-496451eda8b5",
+    conversation_id="6fa22a6a-****-****-b1c3-5c795d0f45ef",
+)
+
+# Start a new conversation with RAG
+client.start_new_conversation()
+resp = client.query("What's RAG?")
+
+print("[INFO] response is", resp)
+```
 
 
 ## Contributing
