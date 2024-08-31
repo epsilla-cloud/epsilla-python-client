@@ -92,7 +92,7 @@ client.unload_db("MyDB")
 https://cloud.epsilla.com
 
 #### Use Epsilla Cloud module to connect with the vectordb
-Please check https://github.com/epsilla-cloud/epsilla-python-client/blob/main/examples/hello_epsilla_cloud.py for detail.
+Please check <a href="https://github.com/epsilla-cloud/epsilla-python-client/blob/main/examples/hello_epsilla_cloud.py">example</a> for detail.
 ```python3
 from pyepsilla import cloud
 
