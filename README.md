@@ -5,10 +5,6 @@ https://pypi.org/project/pyepsilla/#history
 
 ## Installation
 ```shell
-pip3 install pyepsilla
-```
-or
-```shell
 pip3 install --upgrade pyepsilla
 ```
 
