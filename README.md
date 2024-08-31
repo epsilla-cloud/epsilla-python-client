@@ -1,10 +1,9 @@
-<div align="center">
 <p align="center">
     <img width="275" alt="Epsilla Logo" src="https://epsilla-misc.s3.amazonaws.com/epsilla-horizontal.png">
 </p>
 
 <p align="center">
-    <b>Python Client for <a href="https://github.com/epsilla-cloud/vectordb">Epsilla</a> vector database.</b>
+    <b>Python Client for <a href="https://github.com/epsilla-cloud/vectordb">Epsilla</a> Vector Database</b>
 </p>
 
 <hr />
