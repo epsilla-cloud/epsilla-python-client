@@ -3,7 +3,7 @@
 Welcome to Python SDK for Epsilla Vector Database! 
 https://pypi.org/project/pyepsilla/#history
 
-## Installation
+## Install pyepsilla
 ```shell
 pip3 install --upgrade pyepsilla
 ```
