@@ -6,18 +6,16 @@
 # 2. create a table with schema in db
 # 3. get the api key with project id, run this program
 
-import sys
-
 from pyepsilla import cloud
 
 # Connect to Epsilla Cloud
 client = cloud.Client(
-    project_id="7a68814c-f839-4a67-9ec6-93c027c865e6",
+    project_id="7a68814c-f839-4a67-9ec6-93c027c865e0",
     api_key="epsilla-cloud-api-key",
 )
 
 # Connect to Vectordb
-db = client.vectordb(db_id="6accafb1-476d-43b0-aa64-12ebfbf7442d")
+db = client.vectordb(db_id="6accafb1-476d-43b0-aa64-12ebfbf7441d")
 
 
 # Create a table with schema

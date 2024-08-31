@@ -6,8 +6,6 @@
 # 2. launch a new converstation with epsilla rag
 # 3. send a query and wait the response from epsilla ragg
 
-import sys
-
 from pyepsilla import cloud
 
 # Connect to Epsilla RAG
