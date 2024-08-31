@@ -14,7 +14,7 @@ pip3 install --upgrade pyepsilla
 
 ## Connect to Epsilla Vector Database
 
-#### Run vectordb on localhost
+#### Run epsilla vectordb on localhost
 ```shell
 docker pull epsilla/vectordb
 docker run -d -p 8888:8888 epsilla/vectordb
