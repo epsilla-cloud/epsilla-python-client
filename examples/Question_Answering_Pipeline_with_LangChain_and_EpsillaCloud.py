@@ -17,7 +17,7 @@ pip install -U langchain-community
 # Step2. Configure the OpenAI API Key
 import os
 
-# os.environ["OPENAI_API_KEY"] = "Your-OpenAI-API-Key"
+os.environ["OPENAI_API_KEY"] = "Your-OpenAI-API-Key"
 epsilla_api_key = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
 project_id = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
 db_id = os.getenv("EPSILLA_DB_ID", "Your-DB-ID")
