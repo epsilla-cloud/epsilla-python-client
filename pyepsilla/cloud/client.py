@@ -55,7 +55,7 @@ class Client(object):
 
     def load_db(self, db_name: str, db_path: str):
         db_id = db_name.lstripe("db_").replace("_", "-")
-        req_url = f"/vectordb/{db_id}/load"
+        req_url = f"{self._baseurl}/vectordb/{db_id}/load"
         resp = requests.post(url=req_url, data=None, headers=self._header, verify=False)
         status_code = resp.status_code
         body = resp.json()
@@ -68,7 +68,7 @@ class Client(object):
         return 200, {"statusCode": 200, "message": "", "result": {}}
 
     def get_db_info(self, db_id: str):
-        req_url = "{}/vectordb/{}".format(self._baseurl, db_id)
+        req_url = f"{self._baseurl}/vectordb/{db_id}"
         resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
         status_code = resp.status_code
         body = resp.json()
@@ -77,7 +77,7 @@ class Client(object):
         return status_code, body
 
     def get_db_statistics(self, db_id: str):
-        req_url = "{}/vectordb/{}/statistics".format(self._baseurl, db_id)
+        req_url = f"{self._baseurl}/vectordb/{db_id}/statistics"
         req_data = None
         resp = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
