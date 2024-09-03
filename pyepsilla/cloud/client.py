@@ -54,7 +54,7 @@ class Client(object):
         return db_list
 
     def load_db(self, db_name: str, db_path: str):
-        db_id = db_name.lstripe("db_").replace("_", "-")
+        db_id = db_name.lstrip("db_").replace("_", "-")
         req_url = f"{self._baseurl}/vectordb/{db_id}/load"
         resp = requests.post(url=req_url, data=None, headers=self._header, verify=False)
         status_code = resp.status_code
