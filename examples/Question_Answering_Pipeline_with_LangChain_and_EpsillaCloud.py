@@ -37,7 +37,7 @@ embeddings = OpenAIEmbeddings()
 
 # Step4. Load the vector store
 from langchain_community.vectorstores import Epsilla
-from pyepsilla import cloud, vectordb
+from pyepsilla import cloud
 
 db_name = f"db_{db_id.replace('-', '_')}"
 db_path = f"/data/{project_id}/{db_name}/s{db_sharding_id}"
