@@ -27,6 +27,7 @@ class Client(object):
         }
         if headers is not None:
             self._header.update(headers)
+        self._default_db_id = None
 
     def validate(self):
         resp = requests.get(
@@ -51,6 +52,20 @@ class Client(object):
         resp.close()
         del resp
         return db_list
+
+    def load_db(self, db_name: str, db_path: str):
+        db_id = db_name.lstripe("db_").replace("_", "-")
+        req_url = f"/vectordb/{db_id}/load"
+        resp = requests.post(url=req_url, data=None, headers=self._header, verify=False)
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
+        return status_code, body
+
+    def use_db(self, db_name: str):
+        self._default_db_id = db_name.lstrip("db_").replace("_", "-")
+        return 200, {"statusCode": 200, "message": "", "result": {}}
 
     def get_db_info(self, db_id: str):
         req_url = "{}/vectordb/{}".format(self._baseurl, db_id)
