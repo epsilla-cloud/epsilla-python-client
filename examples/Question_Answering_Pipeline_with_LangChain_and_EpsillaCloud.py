@@ -37,7 +37,7 @@ embeddings = OpenAIEmbeddings()
 
 # Step4. Load the vector store
 from langchain_community.vectorstores import Epsilla
-from pyepsilla import cloud, vectordb
+from pyepsilla import cloud
 
 db_name = f"db_{db_id.replace('-', '_')}"
 db_path = f"/data/{project_id}/{db_name}/s{db_sharding_id}"
@@ -60,6 +60,12 @@ vector_store = Epsilla.from_documents(
     db_name=db_name,
     collection_name=table_name,
 )
+
+# query = "What did the president say about Ketanji Brown Jackson"
+# docs = vector_store.similarity_search(query)
+# print(docs[0].page_content)
+
+
 
 # Step4. Create the QA for Retrieval
 from langchain.chains import RetrievalQA
