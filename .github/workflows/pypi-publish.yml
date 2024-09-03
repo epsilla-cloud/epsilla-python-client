@@ -11,7 +11,7 @@ name: Upload Python Package
 on:
   push:
     branches: [ "main" ]
-    paths: ['pyepsilla/vectordb/version.py']
+    paths: ['pyepsilla/vectordb/version.py', 'pyproject.toml']
 
 jobs:
   deploy:
