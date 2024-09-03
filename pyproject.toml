@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.10"
 boto3 = "^1.35.5"
-posthog = "^3.6.0"
+posthog = "^3.6.3"
 py-machineid = "^0.6.0"
 sentry-sdk = "^2.13.0"
 requests = "^2.32.3"
