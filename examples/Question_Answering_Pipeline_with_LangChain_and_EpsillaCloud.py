@@ -61,8 +61,6 @@ vector_store = Epsilla.from_documents(
     collection_name=table_name,
 )
 
-
-
 # Step4. Create the QA for Retrieval
 from langchain.chains import RetrievalQA
 from langchain_openai import OpenAI
