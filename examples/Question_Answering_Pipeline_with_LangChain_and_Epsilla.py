@@ -16,8 +16,7 @@ pip install -U langchain-openai
 
 # Step2. Configure the OpenAI API Key
 import os
-
-os.environ["OPENAI_API_KEY"] = "*****"
+os.environ["OPENAI_API_KEY"] = "Your-OpenAI-API-Key"
 
 
 # Step3. Load the documents
@@ -25,20 +24,14 @@ from langchain.document_loaders import WebBaseLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 
-loader = WebBaseLoader(
-    "https://raw.githubusercontent.com/hwchase17/chat-your-data/master/state_of_the_union.txt"
-)
+loader = WebBaseLoader("https://raw.githubusercontent.com/hwchase17/chat-your-data/master/state_of_the_union.txt")
 documents = loader.load()
-documents = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0).split_documents(
-    documents
-)
+documents = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0).split_documents(documents)
 embeddings = OpenAIEmbeddings()
 
 
-
-
 # Step4. Load the vector store
-from langchain.vectorstores import Epsilla
+from langchain_community.vectorstores import Epsilla
 from pyepsilla import vectordb
 
 db_client = vectordb.Client(protocol="https", host="demo.epsilla.com", port="443")
@@ -56,10 +49,11 @@ vector_store = Epsilla.from_documents(
 )
 
 
+
+
 # Step4. Create the QA for Retrieval
 from langchain.chains import RetrievalQA
 from langchain_openai import OpenAI
-
 
 qa = RetrievalQA.from_chain_type(
     llm=OpenAI(), chain_type="stuff", retriever=vector_store.as_retriever()
