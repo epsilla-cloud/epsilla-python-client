@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyepsilla"
-version = "0.3.8"
+version = "0.3.9"
 description = ""
 authors = ["Epsilla <info@epsilla.com>"]
 readme = "README.md"
