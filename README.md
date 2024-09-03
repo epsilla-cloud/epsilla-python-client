@@ -180,12 +180,17 @@ The resp will contains answer as well as contexts, like {"answer": "****", "cont
 ```python3
 from pyepsilla import cloud
 
+epsilla_api_key = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
+project_id = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
+ragapp_id = os.getenv("EPSILLA_RAGAPP_ID", "Your-RAGAPP-ID")
+conversation_id = os.getenv("EPSILLA_CONVERSATION_ID", "Your-CONVERSATION-ID")
+
 # 1.Connect to Epsilla RAG
 client = cloud.RAG(
-    project_id="ce07c6fc-****-****-b7bd-b7819f22bcff",
-    api_key="eps_**********",
-    ragapp_id="153a5a49-****-****-b2b8-496451eda8b5",
-    conversation_id="6fa22a6a-****-****-b1c3-5c795d0f45ef",
+    project_id=project_id,
+    api_key=epsilla_api_key,
+    ragapp_id=ragapp_id,
+    conversation_id=conversation_id,
 )
 
 # 2.Start a new conversation with RAG
