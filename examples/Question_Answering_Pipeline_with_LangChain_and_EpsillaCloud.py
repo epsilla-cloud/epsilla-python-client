@@ -17,7 +17,7 @@ pip install -U langchain-community
 # Step2. Configure the OpenAI API Key
 import os
 
-os.environ["OPENAI_API_KEY"] = "Your-OpenAI-API-Key"
+# os.environ["OPENAI_API_KEY"] = "Your-OpenAI-API-Key"
 epsilla_api_key = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
 project_id = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
 db_id = os.getenv("EPSILLA_DB_ID", "Your-DB-ID")
@@ -29,9 +29,13 @@ from langchain.document_loaders import WebBaseLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 
-loader = WebBaseLoader("https://raw.githubusercontent.com/hwchase17/chat-your-data/master/state_of_the_union.txt")
+loader = WebBaseLoader(
+    "https://raw.githubusercontent.com/hwchase17/chat-your-data/master/state_of_the_union.txt"
+)
 documents = loader.load()
-documents = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0).split_documents(documents)
+documents = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0).split_documents(
+    documents
+)
 embeddings = OpenAIEmbeddings()
 
 
@@ -60,6 +64,12 @@ vector_store = Epsilla.from_documents(
     db_name=db_name,
     collection_name=table_name,
 )
+
+# query = "What did the president say about Ketanji Brown Jackson"
+# docs = vector_store.similarity_search(query)
+# print(docs[0].page_content)
+
+
 
 # Step4. Create the QA for Retrieval
 from langchain.chains import RetrievalQA
