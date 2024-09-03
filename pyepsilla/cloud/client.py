@@ -27,7 +27,7 @@ class Client(object):
         }
         if headers is not None:
             self._header.update(headers)
-        self._default_db_id = None
+        self._db_id = None
 
     def validate(self):
         resp = requests.get(
@@ -64,7 +64,7 @@ class Client(object):
         return status_code, body
 
     def use_db(self, db_name: str):
-        self._default_db_id = db_name.lstrip("db_").replace("_", "-")
+        self._db_id = db_name.lstrip("db_").replace("_", "-")
         return 200, {"statusCode": 200, "message": "", "result": {}}
 
     def get_db_info(self, db_id: str):
@@ -136,7 +136,7 @@ class Vectordb(Client):
     def list_tables(self):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
-        req_url = "{}/table/list".format(self._baseurl)
+        req_url = f"{self._baseurl}/table/list"
         resp = requests.get(url=req_url, headers=self._header, verify=False)
         status_code = resp.status_code
         body = resp.json()
