@@ -35,27 +35,31 @@ documents = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0).split_docume
 embeddings = OpenAIEmbeddings()
 
 
+
+
 # Step4. Load the vector store
 from langchain.vectorstores import Epsilla
 from pyepsilla import vectordb
 
-client = vectordb.Client(protocol="https", host="demo.epsilla.com", port="443")
+db_client = vectordb.Client(protocol="https", host="demo.epsilla.com", port="443")
 
-status_code, response = client.load_db("MyDB", "/data/MyDB")
+status_code, response = db_client.load_db("MyDB", "/data/MyDB")
 print(status_code, response)
 
 vector_store = Epsilla.from_documents(
     documents,
     embeddings,
-    client,
+    db_client,
     db_path="/data/MyDB",
     db_name="MyDB",
     collection_name="MyCollection",
 )
 
+
 # Step4. Create the QA for Retrieval
 from langchain.chains import RetrievalQA
 from langchain_openai import OpenAI
+
 
 qa = RetrievalQA.from_chain_type(
     llm=OpenAI(), chain_type="stuff", retriever=vector_store.as_retriever()
