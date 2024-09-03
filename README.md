@@ -119,7 +119,7 @@ db_id = os.getenv("EPSILLA_DB_ID", "Your-DB-ID")
 
 
 # 1.Connect to Epsilla Cloud
-client = cloud.Client(project_id="*****-****-****-****-************", api_key="eps_**********")
+cloud_client = cloud.Client(project_id="*****-****-****-****-************", api_key="eps_**********")
 
 # 2.Connect to Vectordb
 db_client = cloud_client.vectordb(db_id)
