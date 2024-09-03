@@ -4,28 +4,29 @@
 # Try this simple example for epsilla cloud
 # 1. create project and db on epsilla cloud
 # 2. create a table with schema in db
-# 3. get the api key with project id, run this program
+# 3. get the epsilla cloud api key with project id, run this program
 
 import sys
 import os
 from pyepsilla import cloud
 
-project_id = os.getenv("epsilla_project_id")
-api_key = os.getenv("epsilla_api_key")
-db_id = os.getenv("epsilla_db_id")
+project_id = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
+epsilla_api_key = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
+db_id = os.getenv("EPSILLA_DB_ID", "Your-DB-ID")
 
 if not project_id or not api_key or not db_id:
-    print("Please set the environment variables: epsilla_project_id, epsilla_api_key, epsilla_db_id")
+    print("Please set the environment variables: EPSILLA_PROJECT_ID, EPSILLA_API_KEY, EPSILLA_DB_ID")
     sys.exit(1)
 
 # Connect to Epsilla Cloud
-client = cloud.Client(
+cloud_client = cloud.Client(
     project_id=project_id,
-    api_key=api_key,
+    api_key=epsilla_api_key,
 )
 
 # Connect to Vectordb
-db = client.vectordb(db_id=db_id)
+db_cloud = cloud_client.vectordb(db_id=db_id)
+
 
 
 try:

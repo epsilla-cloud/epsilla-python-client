@@ -2,10 +2,7 @@
 # -*- coding:utf-8 -*-
 from __future__ import annotations
 
-import datetime
 import json
-import pprint
-import socket
 from typing import Optional, Union
 
 import requests
@@ -21,9 +18,7 @@ class Client(object):
     def __init__(self, project_id: str, api_key: str, headers: dict = None):
         self._project_id = project_id
         self._apikey = api_key
-        self._baseurl = "https://dispatch.epsilla.com/api/v3/project/{}".format(
-            self._project_id
-        )
+        self._baseurl = f"https://dispatch.epsilla.com/api/v3/project/{self._project_id}"  # type: ignore
         self._timeout = 10
         self._header = {
             "Content-type": "application/json",
@@ -32,10 +27,11 @@ class Client(object):
         }
         if headers is not None:
             self._header.update(headers)
+        self._db_id = None
 
     def validate(self):
         resp = requests.get(
-            url=self._baseurl + "/vectordb/list",
+            url=f"{self._baseurl}/vectordb/list",
             data=None,
             headers=self._header,
             verify=False,
@@ -47,7 +43,7 @@ class Client(object):
 
     def get_db_list(self):
         db_list = []
-        req_url = "{}/vectordb/list".format(self._baseurl)
+        req_url = f"{self._baseurl}/vectordb/list"
         resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
         status_code = resp.status_code
         body = resp.json()
@@ -57,8 +53,22 @@ class Client(object):
         del resp
         return db_list
 
+    def load_db(self, db_name: str, db_path: str):
+        db_id = db_name.lstrip("db_").replace("_", "-")
+        req_url = f"{self._baseurl}/vectordb/{db_id}/load"
+        resp = requests.post(url=req_url, data=None, headers=self._header, verify=False)
+        status_code = resp.status_code
+        body = resp.json()
+        resp.close()
+        del resp
+        return status_code, body
+
+    def use_db(self, db_name: str):
+        self._db_id = db_name.lstrip("db_").replace("_", "-")
+        return 200, {"statusCode": 200, "message": "", "result": {}}
+
     def get_db_info(self, db_id: str):
-        req_url = "{}/vectordb/{}".format(self._baseurl, db_id)
+        req_url = f"{self._baseurl}/vectordb/{db_id}"
         resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
         status_code = resp.status_code
         body = resp.json()
@@ -67,7 +77,7 @@ class Client(object):
         return status_code, body
 
     def get_db_statistics(self, db_id: str):
-        req_url = "{}/vectordb/{}/statistics".format(self._baseurl, db_id)
+        req_url = f"{self._baseurl}/vectordb/{db_id}/statistics"
         req_data = None
         resp = requests.get(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
@@ -117,9 +127,7 @@ class Vectordb(Client):
         self._db_id = db_id
         self._api_key = api_key
         self._public_endpoint = public_endpoint
-        self._baseurl = "https://{}/api/v3/project/{}/vectordb/{}".format(
-            self._public_endpoint, self._project_id, self._db_id
-        )
+        self._baseurl = f"https://{self._public_endpoint}/api/v3/project/{self._project_id}/vectordb/{self._db_id}"
         self._header = {"Content-type": "application/json", "X-API-Key": self._api_key}
         if headers is not None:
             self._header.update(headers)
@@ -128,7 +136,7 @@ class Vectordb(Client):
     def list_tables(self):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
-        req_url = "{}/table/list".format(self._baseurl)
+        req_url = f"{self._baseurl}/table/list"
         resp = requests.get(url=req_url, headers=self._header, verify=False)
         status_code = resp.status_code
         body = resp.json()
@@ -147,7 +155,7 @@ class Vectordb(Client):
             raise Exception("[ERROR] db_id is None!")
         if table_fields is None:
             table_fields = []
-        req_url = "{}/table/create".format(self._baseurl)
+        req_url = f"{self._baseurl}/table/create"
         req_data = {"name": table_name, "fields": table_fields}
         if indices is not None:
             req_data["indices"] = indices
@@ -164,7 +172,7 @@ class Vectordb(Client):
     def drop_table(self, table_name: str):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
-        req_url = "{}/table/delete?table_name={}".format(self._baseurl, table_name)
+        req_url = f"{self._baseurl}/table/delete?table_name={table_name}"
         req_data = {}
         resp = requests.delete(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
@@ -177,7 +185,7 @@ class Vectordb(Client):
 
     # Insert data into table
     def insert(self, table_name: str, records: list[dict]):
-        req_url = "{}/data/insert".format(self._baseurl)
+        req_url = f"{self._baseurl}/data/insert"
         req_data = {"table": table_name, "data": records}
         resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
@@ -189,7 +197,7 @@ class Vectordb(Client):
         return status_code, body
 
     def upsert(self, table_name: str, records: list[dict]):
-        req_url = "{}/data/insert".format(self._baseurl)
+        req_url = f"{self._baseurl}/data/insert"
         req_data = {"table": table_name, "data": records, "upsert": True}
         resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
@@ -214,7 +222,7 @@ class Vectordb(Client):
         with_distance: Optional[bool] = False,
         facets: Optional[list[dict]] = None,
     ):
-        req_url = "{}/data/query".format(self._baseurl)
+        req_url = f"{self._baseurl}/data/query"
         req_data = {"table": table_name, "limit": limit}
 
         if response_fields is None:
@@ -279,7 +287,7 @@ class Vectordb(Client):
                 "[WARN] Both primary_keys and ids are prvoided, will use primary keys by default!"
             )
 
-        req_url = "{}/data/delete".format(self._baseurl)
+        req_url = f"{self._baseurl}/data/delete"
         req_data = {"table": table_name}
         if primary_keys is not None:
             req_data["primaryKeys"] = primary_keys
@@ -342,7 +350,7 @@ class Vectordb(Client):
             else:
                 req_data["facets"] = facets
 
-        req_url = "{}/data/get".format(self._baseurl)
+        req_url = f"{self._baseurl}/data/get"
         resp = requests.post(
             url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
         )
