@@ -8,7 +8,7 @@
 pip install langchain
 pip install openai
 pip install tiktoken
-pip install pyepsilla
+pip install -U pyepsilla
 pip install -U langchain-openai
 pip install -U langchain-community
 """
@@ -25,7 +25,7 @@ db_sharding_id = os.getenv("EPSILLA_DB_SHARDING_ID", 0)
 
 
 # Step3. Load the documents
-from langchain.document_loaders import WebBaseLoader
+from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 
@@ -43,13 +43,13 @@ db_name = f"db_{db_id.replace('-', '_')}"
 db_path = f"/data/{project_id}/{db_name}/s{db_sharding_id}"
 table_name = "MyCollection"
 
-# Connect to Epsilla Cloud
+# Step4.1 Connect to Epsilla Cloud
 cloud_client = cloud.Client(
     project_id=project_id,
     api_key=epsilla_api_key,
 )
 
-# Connect to Vectordb
+# Step4.2 Connect to Vectordb
 db_client = cloud_client.vectordb(db_id)
 
 vector_store = Epsilla.from_documents(
@@ -67,7 +67,7 @@ vector_store = Epsilla.from_documents(
 
 
 
-# Step4. Create the QA for Retrieval
+# Step5. Create the QA for Retrieval
 from langchain.chains import RetrievalQA
 from langchain_openai import OpenAI
 
