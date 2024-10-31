@@ -8,7 +8,7 @@
 
 from pyepsilla import cloud
 
-# Connect to Epsilla RAG
+# Connect to Epsilla RAG, conversation_id is not a must
 client = cloud.RAG(
     project_id="**********",
     api_key="eps_**********",
