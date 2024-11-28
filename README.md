@@ -38,6 +38,10 @@ docker run -d -p 18888:8888 epsilla/vectordb
 ```python
 from pyepsilla import vectordb
 
+db_name = "MyDB"
+db_path = "/tmp/epsilla"
+table_name = "MyTable"
+
 ## 1.Connect to vectordb
 client = vectordb.Client(
   host='localhost',
@@ -45,12 +49,12 @@ client = vectordb.Client(
 )
 
 ## 2.Load and use a database
-client.load_db(db_name="MyDB", db_path="/tmp/epsilla")
-client.use_db(db_name="MyDB")
+client.load_db(db_name, db_path)
+client.use_db(db_name)
 
 ## 3.Create a table in the current database
 client.create_table(
-  table_name="MyTable",
+  table_name=table_name,
   table_fields=[
     {"name": "ID", "dataType": "INT", "primaryKey": True},
     {"name": "Doc", "dataType": "STRING"},
@@ -60,7 +64,7 @@ client.create_table(
 
 ## 4.Insert records
 client.insert(
-  table_name="MyTable",
+  table_name=table_name,
   records=[
     {"ID": 1, "Doc": "Berlin", "Embedding": [0.05, 0.61, 0.76, 0.74]},
     {"ID": 2, "Doc": "London", "Embedding": [0.19, 0.81, 0.75, 0.11]},
@@ -72,7 +76,7 @@ client.insert(
 
 ## 5.Search with specific response field
 status_code, response = client.query(
-  table_name="MyTable",
+  table_name=table_name,
   query_field="Embedding",
   query_vector=[0.35, 0.55, 0.47, 0.94],
   response_fields = ["Doc"],
@@ -82,7 +86,7 @@ print(response)
 
 ## 6.Search without specific response field, then it will return all fields
 status_code, response = client.query(
-  table_name="MyTable",
+  table_name=table_name,
   query_field="Embedding",
   query_vector=[0.35, 0.55, 0.47, 0.94],
   limit=2
@@ -90,16 +94,16 @@ status_code, response = client.query(
 print(response)
 
 ## 7.Delete records by primary_keys (and filter)
-status_code, response =  client.delete(table_name="MyTable", primary_keys=[3, 4])
-status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
+status_code, response =  client.delete(table_name=table_name, primary_keys=[3, 4])
+status_code, response =  client.delete(table_name=table_name, filter="Doc <> 'San Francisco'")
 print(response)
 
 
 ## 8.Drop a table
-client.drop_table("MyTable")
+client.drop_table(table_name)
 
 ## 9.Unload a database from memory
-client.unload_db("MyDB")
+client.unload_db(db_name)
 ```
 
 
@@ -119,7 +123,7 @@ db_id = os.getenv("EPSILLA_DB_ID", "Your-DB-ID")
 
 
 # 1.Connect to Epsilla Cloud
-client = cloud.Client(project_id="*****-****-****-****-************", api_key="eps_**********")
+cloud_client = cloud.Client(project_id="*****-****-****-****-************", api_key="eps_**********")
 
 # 2.Connect to Vectordb
 db_client = cloud_client.vectordb(db_id)
@@ -180,12 +184,17 @@ The resp will contains answer as well as contexts, like {"answer": "****", "cont
 ```python3
 from pyepsilla import cloud
 
+epsilla_api_key = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
+project_id = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
+ragapp_id = os.getenv("EPSILLA_RAGAPP_ID", "Your-RAGAPP-ID")
+conversation_id = os.getenv("EPSILLA_CONVERSATION_ID", "Your-CONVERSATION-ID")
+
 # 1.Connect to Epsilla RAG
 client = cloud.RAG(
-    project_id="ce07c6fc-****-****-b7bd-b7819f22bcff",
-    api_key="eps_**********",
-    ragapp_id="153a5a49-****-****-b2b8-496451eda8b5",
-    conversation_id="6fa22a6a-****-****-b1c3-5c795d0f45ef",
+    project_id=project_id,
+    api_key=epsilla_api_key,
+    ragapp_id=ragapp_id,
+    conversation_id=conversation_id,
 )
 
 # 2.Start a new conversation with RAG
