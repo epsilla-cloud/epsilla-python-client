@@ -11,10 +11,10 @@ import sys
 
 from pyepsilla import cloud
 
-EPSILLA_PROJECT_ID = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
+EPSILLA_PROJECT_ID = os.getenv("EPSILLA_PROJECT_ID", "Your-Epsilla-Project-ID")
 EPSILLA_API_KEY = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
 
-DB_ID = os.getenv("DB_ID", "Your-DB-ID")
+DB_ID = os.getenv("EPSILLA_DB_ID", "Your-Epsilla-DB-ID")
 DB_NAME = os.getenv("DB_NAME", "MyDB")
 DB_PATH = os.getenv("DB_PATH", "/tmp/epsilla_demo")
 TABLE_NAME = os.getenv("TABLE_NAME", "MyTable")
@@ -22,7 +22,7 @@ TABLE_NAME = os.getenv("TABLE_NAME", "MyTable")
 
 if not EPSILLA_PROJECT_ID or not EPSILLA_API_KEY or not DB_ID:
     print(
-        "Please set the environment variables: EPSILLA_PROJECT_ID, EPSILLA_API_KEY, DB_ID"
+        "Please set the environment variables: EPSILLA_PROJECT_ID, EPSILLA_API_KEY, EPSILLA_DB_ID"
     )
     sys.exit(1)
 

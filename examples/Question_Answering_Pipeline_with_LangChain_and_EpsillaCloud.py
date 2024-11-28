@@ -18,20 +18,31 @@ pip install -U langchain-community
 import os
 
 os.environ["OPENAI_API_KEY"] = "Your-OpenAI-API-Key"
-epsilla_api_key = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
-project_id = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
-db_id = os.getenv("EPSILLA_DB_ID", "Your-DB-ID")
-db_sharding_id = os.getenv("EPSILLA_DB_SHARDING_ID", 0)
 
+EPSILLA_PROJECT_ID = os.getenv("EPSILLA_PROJECT_ID", "Your-Epsilla-Project-ID")
+EPSILLA_API_KEY = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
+EPSILLA_DB_ID = os.getenv("EPSILLA_DB_ID", "Your-Epsilla-DB-ID")
+EPSILLA_DB_SHARDING_ID = os.getenv("EPSILLA_DB_SHARDING_ID", 0)
+
+TABLE_NAME = os.getenv("TABLE_NAME", "MyTable")
+
+db_name = f"db_{EPSILLA_DB_ID.replace('-', '_')}"
+db_path = f"/data/{EPSILLA_PROJECT_ID}/{db_name}/s{EPSILLA_DB_SHARDING_ID}"
+
+
+from langchain.text_splitter import CharacterTextSplitter
 
 # Step3. Load the documents
 from langchain_community.document_loaders import WebBaseLoader
-from langchain.text_splitter import CharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 
-loader = WebBaseLoader("https://raw.githubusercontent.com/hwchase17/chat-your-data/master/state_of_the_union.txt")
+loader = WebBaseLoader(
+    "https://raw.githubusercontent.com/hwchase17/chat-your-data/master/state_of_the_union.txt"
+)
 documents = loader.load()
-documents = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0).split_documents(documents)
+documents = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0).split_documents(
+    documents
+)
 embeddings = OpenAIEmbeddings()
 
 
@@ -39,18 +50,14 @@ embeddings = OpenAIEmbeddings()
 from langchain_community.vectorstores import Epsilla
 from pyepsilla import cloud
 
-db_name = f"db_{db_id.replace('-', '_')}"
-db_path = f"/data/{project_id}/{db_name}/s{db_sharding_id}"
-table_name = "MyCollection"
-
 # Step4.1 Connect to Epsilla Cloud
 cloud_client = cloud.Client(
-    project_id=project_id,
-    api_key=epsilla_api_key,
+    project_id=EPSILLA_PROJECT_ID,
+    api_key=EPSILLA_API_KEY,
 )
 
 # Step4.2 Connect to Vectordb
-db_client = cloud_client.vectordb(db_id)
+db_client = cloud_client.vectordb(EPSILLA_DB_ID)
 
 vector_store = Epsilla.from_documents(
     documents,
@@ -58,13 +65,12 @@ vector_store = Epsilla.from_documents(
     db_client,
     db_path=db_path,
     db_name=db_name,
-    collection_name=table_name,
+    collection_name=TABLE_NAME,
 )
 
 # query = "What did the president say about Ketanji Brown Jackson"
 # docs = vector_store.similarity_search(query)
 # print(docs[0].page_content)
-
 
 
 # Step5. Create the QA for Retrieval

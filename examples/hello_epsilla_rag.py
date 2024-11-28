@@ -10,7 +10,7 @@ import os
 
 from pyepsilla import cloud
 
-EPSILLA_PROJECT_ID = os.getenv("EPSILLA_PROJECT_ID", "Your-Project-ID")
+EPSILLA_PROJECT_ID = os.getenv("EPSILLA_PROJECT_ID", "Your-Epsilla-Project-ID")
 EPSILLA_API_KEY = os.getenv("EPSILLA_API_KEY", "Your-Epsilla-API-Key")
 EPSILLA_RAGAPP_ID = os.getenv("EPSILLA_RAGAPP_ID", "Your-Epsilla-RAGAPP-ID")
 EPSILLA_CONVERSATION_ID = os.getenv("EPSILLA_CONVERSATION_ID", None)
