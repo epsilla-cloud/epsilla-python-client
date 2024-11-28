@@ -31,8 +31,8 @@ status_code, response = client.create_table(
         {"name": "Doc", "dataType": "STRING"},
     ],
     indices=[
-      {"name": "Index", "field": "Doc"},
-    ]
+        {"name": "Index", "field": "Doc"},
+    ],
 )
 print(response)
 
@@ -44,16 +44,46 @@ print(response)
 status_code, response = client.insert(
     table_name="MyTable",
     records=[
-        {"ID": 1, "Doc": "The garden was blooming with vibrant flowers, attracting butterflies and bees with their sweet nectar."},
-        {"ID": 2, "Doc": "In the busy city streets, people rushed to and fro, hardly noticing the beauty of the day."},
-        {"ID": 3, "Doc": "The library was a quiet haven, filled with the scent of old books and the soft rustling of pages."},
-        {"ID": 4, "Doc": "High in the mountains, the air was crisp and clear, revealing breathtaking views of the valley below."},
-        {"ID": 5, "Doc": "At the beach, children played joyfully in the sand, building castles and chasing the waves."},
-        {"ID": 6, "Doc": "Deep in the forest, a deer cautiously stepped out, its ears alert for any signs of danger."},
-        {"ID": 7, "Doc": "The old town's historical architecture spoke volumes about its rich cultural past."},
-        {"ID": 8, "Doc": "Night fell, and the sky was a canvas of stars, shining brightly in the moon's soft glow."},
-        {"ID": 9, "Doc": "A cozy cafe on the corner served the best hot chocolate, warming the hands and hearts of its visitors."},
-        {"ID": 10, "Doc": "The artist's studio was cluttered but inspiring, filled with unfinished canvases and vibrant paints."},
+        {
+            "ID": 1,
+            "Doc": "The garden was blooming with vibrant flowers, attracting butterflies and bees with their sweet nectar.",
+        },
+        {
+            "ID": 2,
+            "Doc": "In the busy city streets, people rushed to and fro, hardly noticing the beauty of the day.",
+        },
+        {
+            "ID": 3,
+            "Doc": "The library was a quiet haven, filled with the scent of old books and the soft rustling of pages.",
+        },
+        {
+            "ID": 4,
+            "Doc": "High in the mountains, the air was crisp and clear, revealing breathtaking views of the valley below.",
+        },
+        {
+            "ID": 5,
+            "Doc": "At the beach, children played joyfully in the sand, building castles and chasing the waves.",
+        },
+        {
+            "ID": 6,
+            "Doc": "Deep in the forest, a deer cautiously stepped out, its ears alert for any signs of danger.",
+        },
+        {
+            "ID": 7,
+            "Doc": "The old town's historical architecture spoke volumes about its rich cultural past.",
+        },
+        {
+            "ID": 8,
+            "Doc": "Night fell, and the sky was a canvas of stars, shining brightly in the moon's soft glow.",
+        },
+        {
+            "ID": 9,
+            "Doc": "A cozy cafe on the corner served the best hot chocolate, warming the hands and hearts of its visitors.",
+        },
+        {
+            "ID": 10,
+            "Doc": "The artist's studio was cluttered but inspiring, filled with unfinished canvases and vibrant paints.",
+        },
     ],
 )
 print(response)
@@ -64,7 +94,7 @@ status_code, response = client.query(
     query_text="Where can I find a serene environment, ideal for relaxation and introspection?",
     response_fields=["Doc"],
     with_distance=True,
-    limit=3
+    limit=3,
 )
 print(response)
 

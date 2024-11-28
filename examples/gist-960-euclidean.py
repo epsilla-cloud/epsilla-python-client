@@ -7,72 +7,85 @@
 # 3. wget http://ann-benchmarks.com/gist-960-euclidean.hdf5
 # 4. python3 gist-960-euclidean.py
 
-from pyepsilla import vectordb
-import os, h5py, datetime
+import datetime
+import os
 from urllib.parse import urlparse
 
-## Connect to Epsilla vector database
-client = vectordb.Client(host='127.0.0.1', port='8888')
-client.load_db(db_name="benchmark", db_path="/tmp/epsilla", vector_scale=1000000, wal_enabled=False) ## pay attention to change db_path to persistent volume for production environment
+import h5py
+from pyepsilla import vectordb
+
+# Connect to Epsilla vector database
+client = vectordb.Client(host="127.0.0.1", port="8888")
+client.load_db(
+    db_name="benchmark", db_path="/tmp/epsilla", vector_scale=1000000, wal_enabled=False
+)  # pay attention to change db_path to persistent volume for production environment
 client.use_db(db_name="benchmark")
 
-## Check gist-960-euclidean dataset hdf5 file to download or not
+# Check gist-960-euclidean dataset hdf5 file to download or not
 dataset_download_url = "http://ann-benchmarks.com/gist-960-euclidean.hdf5"
 dataset_filename = os.path.basename(urlparse(dataset_download_url).path)
 if not os.path.isfile(dataset_filename):
     os.system("wget --no-check-certificate {}".format(dataset_download_url))
 
-## Read gist-960-euclidean data from hdf5
-f = h5py.File('gist-960-euclidean.hdf5', 'r')
+# Read gist-960-euclidean data from hdf5
+f = h5py.File("gist-960-euclidean.hdf5", "r")
 print(list(f.keys()))
 training_data = f["train"]
 size = training_data.size
 records_num, dimensions = training_data.shape
 
-## Create table for gist-960-euclidean
+# Create table for gist-960-euclidean
 id_field = {"name": "id", "dataType": "INT", "primaryKey": True}
 vec_field = {"name": "vector", "dataType": "VECTOR_FLOAT", "dimensions": dimensions}
 fields = [id_field, vec_field]
 status_code, response = client.create_table(table_name="benchmark", table_fields=fields)
 
-## Insert 20000 data into table
-records_data = [ {"id": i, "vector": training_data[i].tolist()} for i in range(10000)]
+# Insert 20000 data into table
+records_data = [{"id": i, "vector": training_data[i].tolist()} for i in range(10000)]
 client.insert(table_name="benchmark", records=records_data)
 
-## Insert all data into table
-indexs = [ i for i in range(0, records_num+10000, 50000)]
+# Insert all data into table
+indexs = [i for i in range(0, records_num + 10000, 50000)]
 print("Begin to insert all gist data into table ...")
-for i in range(len(indexs)-1):
-    print("-"*20)
-    start=datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-    print(indexs[i], indexs[i+1])
-    records_data = [{"id": i, "vector": training_data[i].tolist()} for i in range(indexs[i], indexs[i+1])]
+for i in range(len(indexs) - 1):
+    print("-" * 20)
+    start = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    print(indexs[i], indexs[i + 1])
+    records_data = [
+        {"id": i, "vector": training_data[i].tolist()}
+        for i in range(indexs[i], indexs[i + 1])
+    ]
     client.insert(table_name="benchmark", records=records_data)
     end = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     print("START:", start, "\nEND  :", end)
 
 
-## Delete some data by ids
+# Delete some data by ids
 # client.delete(table_name="benchmark", ids=[300033, 600066])
 client.delete(table_name="benchmark", ids=[9999])
 
 
-## Rebuild ann graph, it will wait until rebuild is finished, wait time is depended on the amount of dataset
+# Rebuild ann graph, it will wait until rebuild is finished, wait time is depended on the amount of dataset
 client.rebuild()
 
-## Query vectors
+# Query vectors
 query_field = "vector"
 query_vector = training_data[40000].tolist()
 response_fields = ["id"]
 limit = 2
 
-status_code, response = client.query(table_name="benchmark", query_field=query_field, query_vector=query_vector, response_fields=response_fields, limit=limit, with_distance=True)
+status_code, response = client.query(
+    table_name="benchmark",
+    query_field=query_field,
+    query_vector=query_vector,
+    response_fields=response_fields,
+    limit=limit,
+    with_distance=True,
+)
 print("Response:", response)
 
 
-## Get
+# Get
 status_code, body = client.get(table_name="benchmark")
 print("Status Code:", status_code)
 print("Size of result gotten", len(body["result"]))
-
-

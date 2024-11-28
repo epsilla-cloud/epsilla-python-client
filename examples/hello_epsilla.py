@@ -7,25 +7,30 @@
 # 3. python3 simple_example.py
 #
 
+import os
+
 from pyepsilla import vectordb
 
 # Connect to Epsilla VectorDB
 client = vectordb.Client(protocol="http", host="127.0.0.1", port="8888")
 
-# You can also use Epsilla Cloud
-# client = vectordb.Client(protocol='https', host='demo.epsilla.com', port='443')
+
+DB_NAME = os.getenv("DB_NAME", "MyDB")
+DB_PATH = os.getenv("DB_PATH", "/tmp/epsilla_demo")
+TABLE_NAME = os.getenv("TABLE_NAME", "MyTable")
+
 
 # Load DB with path
 # pay attention to change db_path to persistent volume for production environment
-status_code, response = client.load_db(db_name="MyDB", db_path="/data/epsilla_demo")
+status_code, response = client.load_db(db_name=DB_NAME, db_path=DB_PATH)
 print(response)
 
 # Set DB to current DB
-client.use_db(db_name="MyDB")
+client.use_db(db_name=DB_NAME)
 
 # Create a table with schema in current DB
 status_code, response = client.create_table(
-    table_name="MyTable",
+    table_name=TABLE_NAME,
     table_fields=[
         {"name": "ID", "dataType": "INT", "primaryKey": True},
         {"name": "Doc", "dataType": "STRING"},
@@ -40,7 +45,7 @@ print(response)
 
 # Insert new vector records into table
 status_code, response = client.insert(
-    table_name="MyTable",
+    table_name=TABLE_NAME,
     records=[
         {"ID": 1, "Doc": "Berlin", "Embedding": [0.05, 0.61, 0.76, 0.74]},
         {"ID": 2, "Doc": "London", "Embedding": [0.19, 0.81, 0.75, 0.11]},
@@ -53,7 +58,7 @@ print(response)
 
 # Query Vectors with specific response field
 status_code, response = client.query(
-    table_name="MyTable",
+    table_name=TABLE_NAME,
     query_field="Embedding",
     query_vector=[0.35, 0.55, 0.47, 0.94],
     response_fields=["Doc"],
@@ -62,7 +67,7 @@ status_code, response = client.query(
 
 # Query Vectors without specific response field, then it will return all fields
 status_code, response = client.query(
-    table_name="MyTable",
+    table_name=TABLE_NAME,
     query_field="Embedding",
     query_vector=[0.35, 0.55, 0.47, 0.94],
     limit=2,
@@ -70,7 +75,7 @@ status_code, response = client.query(
 print(response)
 
 # Get Vectors
-status_code, response = client.get(table_name="MyTable", limit=2)
+status_code, response = client.get(table_name=TABLE_NAME, limit=2)
 print(response)
 
 # Get Statistics
@@ -78,16 +83,16 @@ status_code, response = client.statistics()
 print(response)
 
 # Delete Vectors
-# status_code, response =  client.delete(table_name="MyTable", ids=[3])
-status_code, response = client.delete(table_name="MyTable", primary_keys=[3, 4])
-# status_code, response =  client.delete(table_name="MyTable", filter="Doc <> 'San Francisco'")
+# status_code, response =  client.delete(table_name=TABLE_NAME, ids=[3])
+status_code, response = client.delete(table_name=TABLE_NAME, primary_keys=[3, 4])
+# status_code, response =  client.delete(table_name=TABLE_NAME, filter="Doc <> 'San Francisco'")
 print(response)
 
 
 # Drop table
-# status_code, response = client.drop_table("MyTable")
+# status_code, response = client.drop_table(TABLE_NAME)
 # print(response)
 
 # Unload db
-# status_code, response = client.unload_db("MyDB")
+# status_code, response = client.unload_db(DB_NAME)
 # print(response)
