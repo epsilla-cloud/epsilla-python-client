@@ -7,15 +7,18 @@
 # 3. python3 simple_example.py
 #
 
+import os
+
 from pyepsilla import vectordb
 
 # Connect to Epsilla VectorDB
 client = vectordb.Client(protocol="http", host="127.0.0.1", port="8888")
 
 
-DB_NAME = "MyDB"
-DB_PATH = "/data/epsilla_demo"
-TABLE_NAME = "MyTable"
+DB_NAME = os.getenv("DB_NAME", "MyDB")
+DB_PATH = os.getenv("DB_PATH", "/tmp/epsilla_demo")
+TABLE_NAME = os.getenv("TABLE_NAME", "MyTable")
+
 
 # Load DB with path
 # pay attention to change db_path to persistent volume for production environment
