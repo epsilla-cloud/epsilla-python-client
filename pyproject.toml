@@ -12,7 +12,7 @@ posthog = "3.7.4"
 py-machineid = "0.6.0"
 sentry-sdk = "2.19.0"
 requests = "2.32.3"
-pydantic = "2.10.2"
+pydantic = "2.10.0"
 
 
 [build-system]
