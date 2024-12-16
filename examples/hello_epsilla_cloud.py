@@ -27,9 +27,12 @@ if not EPSILLA_PROJECT_ID or not EPSILLA_API_KEY or not DB_ID:
     sys.exit(1)
 
 # Connect to Epsilla Cloud
+# proxies = {"http": "127.0.0.1:1087", "https": "127.0.0.1:1087"}
+
 cloud_client = cloud.Client(
     project_id=EPSILLA_PROJECT_ID,
     api_key=EPSILLA_API_KEY,
+    # proxies=proxies
 )
 
 # Connect to Vectordb
