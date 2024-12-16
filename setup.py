@@ -5,8 +5,8 @@ import sys
 
 from setuptools import find_packages, setup
 
-if sys.version_info < (3, 10):
-    print("Suggest to use Python >= 3.10")
+if sys.version_info < (3, 8):
+    print("Suggest to use Python >= 3.8")
 
 
 setup(
