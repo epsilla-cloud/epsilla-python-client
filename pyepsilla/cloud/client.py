@@ -15,7 +15,9 @@ requests.packages.urllib3.disable_warnings()
 
 
 class Client(object):
-    def __init__(self, project_id: str, api_key: str, headers: dict = None):
+    def __init__(
+        self, project_id: str, api_key: str, headers: dict = None, proxies: dict = None
+    ):
         self._project_id = project_id
         self._apikey = api_key
         self._baseurl = f"https://dispatch.epsilla.com/api/v3/project/{self._project_id}"  # type: ignore
@@ -25,16 +27,21 @@ class Client(object):
             "Connection": "close",
             "X-API-Key": api_key,
         }
+        self._proxy = None
+        if proxies is not None:
+            self._proxy = proxies
         if headers is not None:
             self._header.update(headers)
         self._db_id = None
 
     def validate(self):
+        req_url = f"{self._baseurl}/vectordb/list"
         resp = requests.get(
-            url=f"{self._baseurl}/vectordb/list",
+            url=req_url,
             data=None,
             headers=self._header,
             verify=False,
+            proxies=self._proxy,
         )
         data = resp.json()
         resp.close()
@@ -44,7 +51,13 @@ class Client(object):
     def get_db_list(self):
         db_list = []
         req_url = f"{self._baseurl}/vectordb/list"
-        resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
+        resp = requests.get(
+            url=req_url,
+            data=None,
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
+        )
         status_code = resp.status_code
         body = resp.json()
         if status_code == 200 and body["statusCode"] == 200:
@@ -56,7 +69,13 @@ class Client(object):
     def load_db(self, db_name: str, db_path: str):
         db_id = db_name.lstrip("db_").replace("_", "-")
         req_url = f"{self._baseurl}/vectordb/{db_id}/load"
-        resp = requests.post(url=req_url, data=None, headers=self._header, verify=False)
+        resp = requests.post(
+            url=req_url,
+            data=None,
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
+        )
         status_code = resp.status_code
         body = resp.json()
         resp.close()
@@ -69,7 +88,13 @@ class Client(object):
 
     def get_db_info(self, db_id: str):
         req_url = f"{self._baseurl}/vectordb/{db_id}"
-        resp = requests.get(url=req_url, data=None, headers=self._header, verify=False)
+        resp = requests.get(
+            url=req_url,
+            data=None,
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
+        )
         status_code = resp.status_code
         body = resp.json()
         resp.close()
@@ -80,7 +105,11 @@ class Client(object):
         req_url = f"{self._baseurl}/vectordb/{db_id}/statistics"
         req_data = None
         resp = requests.get(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
@@ -106,7 +135,12 @@ class Client(object):
         status_code, resp = self.get_db_info(db_id=db_id)
         if resp["statusCode"] == 200:
             return Vectordb(
-                self._project_id, db_id, self._apikey, resp["result"]["public_endpoint"]
+                self._project_id,
+                db_id,
+                self._apikey,
+                resp["result"]["public_endpoint"],
+                self._header,
+                self._proxy,
             )
         else:
             print(resp)
@@ -122,6 +156,7 @@ class Vectordb(Client):
         api_key: str,
         public_endpoint: str,
         headers: dict = None,
+        proxies: dict = None,
     ):
         self._project_id = project_id
         self._db_id = db_id
@@ -129,6 +164,9 @@ class Vectordb(Client):
         self._public_endpoint = public_endpoint
         self._baseurl = f"https://{self._public_endpoint}/api/v3/project/{self._project_id}/vectordb/{self._db_id}"
         self._header = {"Content-type": "application/json", "X-API-Key": self._api_key}
+        self._proxy = None
+        if proxies is not None:
+            self._proxy = proxies
         if headers is not None:
             self._header.update(headers)
 
@@ -137,7 +175,9 @@ class Vectordb(Client):
         if self._db_id is None:
             raise Exception("[ERROR] db_id is None!")
         req_url = f"{self._baseurl}/table/list"
-        resp = requests.get(url=req_url, headers=self._header, verify=False)
+        resp = requests.get(
+            url=req_url, headers=self._header, verify=False, proxies=self._proxy
+        )
         status_code = resp.status_code
         body = resp.json()
         resp.close()
@@ -160,7 +200,11 @@ class Vectordb(Client):
         if indices is not None:
             req_data["indices"] = indices
         resp = requests.post(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
@@ -175,7 +219,11 @@ class Vectordb(Client):
         req_url = f"{self._baseurl}/table/delete?table_name={table_name}"
         req_data = {}
         resp = requests.delete(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
@@ -188,7 +236,11 @@ class Vectordb(Client):
         req_url = f"{self._baseurl}/data/insert"
         req_data = {"table": table_name, "data": records}
         resp = requests.post(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
@@ -200,7 +252,11 @@ class Vectordb(Client):
         req_url = f"{self._baseurl}/data/insert"
         req_data = {"table": table_name, "data": records, "upsert": True}
         resp = requests.post(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
@@ -254,7 +310,11 @@ class Vectordb(Client):
                 req_data["facets"] = facets
 
         resp = requests.post(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
@@ -295,7 +355,11 @@ class Vectordb(Client):
             req_data["filter"] = filter
 
         resp = requests.post(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
@@ -352,7 +416,11 @@ class Vectordb(Client):
 
         req_url = f"{self._baseurl}/data/get"
         resp = requests.post(
-            url=req_url, data=json.dumps(req_data), headers=self._header, verify=False
+            url=req_url,
+            data=json.dumps(req_data),
+            headers=self._header,
+            verify=False,
+            proxies=self._proxy,
         )
         status_code = resp.status_code
         body = resp.json()
