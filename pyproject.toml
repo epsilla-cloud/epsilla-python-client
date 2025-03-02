@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pyepsilla"
-version = "0.3.13"
+version = "0.3.14"
 description = ""
 authors = ["Epsilla <info@epsilla.com>"]
 readme = "README.md"
@@ -10,7 +10,7 @@ python = ">=3.8"
 posthog = ">=3.2.0"
 py-machineid = ">=0.5.0"
 sentry-sdk = ">=2.2.0"
-requests = ">=2.22.0"
+requests = ">=2.32.2"
 pydantic = ">=2.6.0"
 
 
