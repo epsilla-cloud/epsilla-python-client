@@ -3,13 +3,13 @@
 
 from .client import Client
 from .field import Field, FieldType
-from .sentry import init_sentry
-from .telemetry import TelemetryManager
+# from .sentry import init_sentry
+# from .telemetry import TelemetryManager
 
 
-init_sentry()
+# init_sentry()
 
-try: 
-  telemetry_manager = TelemetryManager.get_singleton()
-except Exception:
-  pass
+# try: 
+#   telemetry_manager = TelemetryManager.get_singleton()
+# except Exception:
+#   pass
